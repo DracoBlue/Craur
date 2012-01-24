@@ -23,17 +23,23 @@ class Craur
 
         $xpath = new DOMXPath($node);
         $root_node_name = $node->documentElement->nodeName;
+        $namespaces = array();
         foreach ($xpath->query('namespace::*') as $namespace_node)
         {
             $namespace_name = $namespace_node->nodeName;
             if ($namespace_name !== 'xmlns:xml')
             {
-                if (!isset($data[$root_node_name]))
-                {
-                    $data[$root_node_name] = array();
-                }
-                $data[$root_node_name]['@' . $namespace_name] = $namespace_node->nodeValue;
+                $namespaces[$namespace_name] = $namespace_node->nodeValue;
             }
+        }
+        $namespaces = array_reverse($namespaces, true);
+        foreach ($namespaces as $namespace_name => $namespace_uri)
+        {
+            if (!isset($data[$root_node_name]))
+            {
+                $data[$root_node_name] = array();
+            }
+            $data[$root_node_name]['@' . $namespace_name] = $namespace_uri;
         }
 
         return new Craur($data);

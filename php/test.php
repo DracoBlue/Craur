@@ -66,4 +66,20 @@ $node = Craur::createFromXml($xml_string);
 // }
 
 // echo $node->toXmlString();
-echo $node->toJsonString();
+// echo $node->toJsonString();
+
+/*
+ * Assertions
+ */
+
+$json = $node->toJsonString();
+$test_node_from_json = Craur::createFromJson($json);
+$xml = $test_node_from_json->toXmlString();
+$test_node_from_xml_from_json = Craur::createFromXml($xml);
+$json_from_xml_from_json = $test_node_from_xml_from_json->toJsonString();
+
+echo "Before:" . PHP_EOL;
+echo $json .PHP_EOL . PHP_EOL;
+echo "After:" . PHP_EOL;
+echo $json_from_xml_from_json . PHP_EOL . PHP_EOL;
+assert($json === $json_from_xml_from_json);
