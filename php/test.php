@@ -91,6 +91,30 @@ catch (Exception $exception)
      */
 }
 
+try
+{
+    $node->get('feed.non_existant_key[]');
+    /*
+     * This should not work!
+     */
+    assert(false);
+}
+catch (Exception $exception)
+{
+    /*
+     * Nice, we got an exception!
+     */
+}
+
+
+/*
+ * In case of default value, it should work!
+ */
+$values = $node->get('feed.non_existant_key[]', array());
+
+assert(is_array($values));
+assert(count($values) === 0);
+
 /*
  * JSON -> Craur -> XML -> Craur -> JSON 
  */
