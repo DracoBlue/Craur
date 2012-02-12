@@ -72,6 +72,28 @@ $node = Craur::createFromXml($xml_string);
  * Assertions
  */
 
+ 
+assert($node->get('feed.title') === 'Example Feed');
+assert($node->get('feed.non_existant_key', 'default') === 'default');
+
+try
+{
+    $node->get('feed.non_existant_key');
+    /*
+     * This should not work!
+     */
+    assert(false);
+}
+catch (Exception $exception)
+{
+    /*
+     * Nice, we got an exception!
+     */
+}
+
+/*
+ * JSON -> Craur -> XML -> Craur -> JSON 
+ */
 $json = $node->toJsonString();
 $test_node_from_json = Craur::createFromJson($json);
 $xml = $test_node_from_json->toXmlString();

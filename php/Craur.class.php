@@ -126,7 +126,7 @@ class Craur
         $this->data = $data;
     }
 
-    public function get($path)
+    public function get($path, $default_value = null)
     {
         $current_node = $this->data;
 
@@ -145,7 +145,15 @@ class Craur
         {
             if (!isset($current_node[$part]))
             {
-                throw new Exception('Path not found: ' . $path);
+                if (func_num_args() < 2)
+                {
+                    /*
+                     * If we have no default_value parameter supplied
+                     */
+                    throw new Exception('Path not found: ' . $path);
+                }
+                
+                return $default_value;            
             }
             $current_node = $current_node[$part];
         }
@@ -161,7 +169,15 @@ class Craur
              */
             if (is_array($current_node) && empty($current_node))
             {
-                throw new Exception('Path not found: ' . $path);
+                if (func_num_args() < 2)
+                {
+                     /*
+                     * If we have no default_value parameter supplied
+                     */
+                    throw new Exception('Path not found: ' . $path);
+                }
+                
+                return $default_value;            
             }
 
             if (is_array($current_node) && isset($current_node[0]))
@@ -199,7 +215,15 @@ class Craur
             /*
              * Associative array :( - no idea what to do now!
              */
-            throw new Exception('Path not found: ' . $path);
+            if (func_num_args() < 2)
+            {
+                /*
+                 * If we have no default_value parameter supplied
+                 */
+                throw new Exception('Path not found: ' . $path);
+            }
+            
+            return $default_value;            
         }
 
         /*

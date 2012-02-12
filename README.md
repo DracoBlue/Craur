@@ -43,6 +43,12 @@ This example is how it looks like if you parse a simple atom-feed with craur.
         var_dump($link->get('@href'));
     }
 
+## Changelog
+
+- 1.0-dev
+  - added default_value for `Craur->get($path, $default_value)`
+  - initial version 
+
 ## License
 
 This work is copyright by DracoBlue (<http://dracoblue.net>) and licensed under the terms of MIT License.
