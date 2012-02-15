@@ -12,7 +12,7 @@ class Craur
     static function createFromXml($xml_string)
     {
         $node = new DOMDocument('1.0', 'utf-8');
-        $node->loadXML($xml_string);
+        $node->loadXML($xml_string, LIBXML_NOCDATA);
 
         $data = self::convertDomNodeToDataArray($node);
 
