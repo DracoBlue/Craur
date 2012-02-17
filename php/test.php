@@ -73,7 +73,7 @@ $node = Craur::createFromXml($xml_string);
  */
 
  
-assert($node->get('feed.title') === 'Example Feed');
+assert((string) $node->get('feed.title') === 'Example Feed');
 assert($node->get('feed.non_existant_key', 'default') === 'default');
 
 try

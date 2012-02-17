@@ -2,7 +2,8 @@
 
 class Craur
 {
-    protected $data = null;
+    protected $data_array = null;
+    protected $data_dom_node = null;
 
     static function createFromJson($json_string)
     {
@@ -13,39 +14,11 @@ class Craur
     {
         $node = new DOMDocument('1.0', 'utf-8');
         $node->loadXML($xml_string, LIBXML_NOCDATA);
-
-        $data = self::convertDomNodeToDataArray($node);
-
-        if (!is_array($data))
-        {
-            $data = array('@' => $data);
-        }
-
-        $xpath = new DOMXPath($node);
-        $root_node_name = $node->documentElement->nodeName;
-        $namespaces = array();
-        foreach ($xpath->query('namespace::*') as $namespace_node)
-        {
-            $namespace_name = $namespace_node->nodeName;
-            if ($namespace_name !== 'xmlns:xml')
-            {
-                $namespaces[$namespace_name] = $namespace_node->nodeValue;
-            }
-        }
-        $namespaces = array_reverse($namespaces, true);
-        foreach ($namespaces as $namespace_name => $namespace_uri)
-        {
-            if (!isset($data[$root_node_name]))
-            {
-                $data[$root_node_name] = array();
-            }
-            $data[$root_node_name]['@' . $namespace_name] = $namespace_uri;
-        }
-
-        return new Craur($data);
+        
+        return new Craur($node);
     }
 
-    static function convertDomNodeToDataArray(DomNode $node)
+    protected function convertDomNodeToDataArray(DomNode $node)
     {
         $data = array();
         $values = array();
@@ -70,11 +43,11 @@ class Craur
                         {
                             $data[$key] = array($data[$key]);
                         }
-                        $data[$key][] = self::convertDomNodeToDataArray($child_node);
+                        $data[$key][] = $this->convertDomNodeToDataArray($child_node);
                     }
                     else
                     {
-                        $data[$key] = self::convertDomNodeToDataArray($child_node);
+                        $data[$key] = $this->convertDomNodeToDataArray($child_node);
                     }
                 }
             }
@@ -121,14 +94,188 @@ class Craur
         return $data;
     }
 
-    protected function __construct(array $data)
+    protected function __construct($data)
     {
-        $this->data = $data;
+        if ($data instanceof DOMNode)
+        {
+            $this->data_dom_node = $data;    
+        }
+        else
+        {
+            $this->data_array = $data;
+        }
+    }
+    
+    protected function getDataAsArray()
+    {
+        if (!$this->data_array)
+        {
+            $node = $this->data_dom_node;
+            $data = $this->convertDomNodeToDataArray($node);
+
+            if (!is_array($data))
+            {
+                $data = array('@' => $data);
+            }
+    
+            $dom_document = $this->data_dom_node;
+            if (!$dom_document instanceof DOMDocument)
+            {
+                if ($dom_document instanceof DOMAttr)
+                {
+                    $dom_document = $dom_document->ownerElement->ownerDocument;
+                }
+                else
+                {
+                    $dom_document = $this->data_dom_node->ownerDocument;
+                }
+            }
+            $xpath = new DOMXPath($dom_document);
+
+            $root_node_name = $dom_document->documentElement->nodeName;
+            $namespaces = array();
+            foreach ($xpath->query('namespace::*') as $namespace_node)
+            {
+                $namespace_name = $namespace_node->nodeName;
+                if ($namespace_name !== 'xmlns:xml')
+                {
+                    $namespaces[$namespace_name] = $namespace_node->nodeValue;
+                }
+            }
+            $namespaces = array_reverse($namespaces, true);
+            foreach ($namespaces as $namespace_name => $namespace_uri)
+            {
+                if (!isset($data[$root_node_name]))
+                {
+                    $data[$root_node_name] = array();
+                }
+                $data[$root_node_name]['@' . $namespace_name] = $namespace_uri;
+            }
+            
+            $this->data_array = $data;
+        }
+        
+        return $this->data_array;
+    }
+
+    protected function getWithXpath($path, $default_value = null)
+    {
+        $return_multiple = false;
+
+        if (substr($path, -2) === '[]')
+        {
+            $return_multiple = true;
+            $path = substr($path, 0, strlen($path) - 2);
+        }
+        
+        $xpath_query = '/xmlns:' . str_replace('.', '[1]/xmlns:', $path);
+        $xpath_query = str_replace('/xmlns:@', '/@', $xpath_query);
+        
+        $dom_document = $this->data_dom_node;
+        if (!$dom_document instanceof DOMDocument)
+        {
+            if ($dom_document instanceof DOMAttr)
+            {
+                $dom_document = $dom_document->ownerElement->ownerDocument;
+            }
+            else
+            {
+                $dom_document = $this->data_dom_node->ownerDocument;
+            }
+        }
+        $xpath = new DOMXPath($dom_document);
+        
+        foreach ($xpath->query('namespace::*') as $namespace_node)
+        {
+            $namespace_name = $namespace_node->nodeName;
+            if ($namespace_name === 'xmlns')
+            {
+                $xpath->registerNamespace($namespace_name, $namespace_node->nodeValue);
+            }
+        }
+            
+        // print_r('base: ' . $this->data_dom_node->getNodePath() . PHP_EOL);
+        if ($this->data_dom_node->getNodePath() != '/')
+        {
+            $xpath_query = substr($this->data_dom_node->getNodePath(), 0) . $xpath_query;
+        }
+        // print_r($xpath_query . PHP_EOL);
+        
+        // $xpath_query = 'dc:title';
+        // $xpath_query = '/*/*[8]/*[3]/@href';
+        // $xpath_query = '/xmlns:feed/xmlns:entry/xmlns:link/@href';
+        // $xpath_query = '/xmlns:feed/xmlns:entry/xmlns:link';
+        
+        
+        if ($return_multiple)
+        {
+            // print_r('multi query for: ' . $xpath_query . PHP_EOL);
+            $nodes = array();
+            foreach ($xpath->query($xpath_query) as $node)
+            {
+                // echo 'subpath:' . $node->getNodePath() . "\n";
+                // var_dump((string) $node->tagName);
+                
+                $nodes[] = new Craur($node);
+                // echo (string) $nodes[0];
+                // var_dump($node);
+                // var_dump($this->convertDomNodeToDataArray($node));
+            }
+            
+            if (empty($nodes))
+            {
+                if (func_num_args() < 2)
+                {
+                    /*
+                     * If we have no default_value parameter supplied
+                     */
+                    throw new Exception('Path not found: ' . $path);
+                }
+                
+                return $default_value;                  
+            }
+            
+            return $nodes;
+        }
+        
+        // print_r('query for: ' . $xpath_query . PHP_EOL);            
+        foreach ($xpath->query($xpath_query) as $node)
+        {
+            // echo 'subpath:' . $node->getNodePath() . "\n";
+            // var_dump((string) $node->tagName);
+            
+            return new Craur($node);
+            // echo (string) $nodes[0];
+            // var_dump($node);
+            // var_dump($this->convertDomNodeToDataArray($node));
+        }
+        
+        if (func_num_args() < 2)
+        {
+            /*
+             * If we have no default_value parameter supplied
+             */
+            throw new Exception('Path not found: ' . $path);
+        }
+        
+        return $default_value;            
     }
 
     public function get($path, $default_value = null)
     {
-        $current_node = $this->data;
+        if ($this->data_dom_node)
+        {
+            if (func_num_args() < 2)
+            {
+                return $this->getWithXpath($path);
+            }
+            else
+            {
+                return $this->getWithXpath($path, $default_value);
+            }
+        }
+        
+        $current_node = $this->getDataAsArray();
 
         $return_multiple = false;
 
@@ -267,10 +414,11 @@ class Craur
 
     public function __toString()
     {
-
-        if (isset($this->data['@']))
+        $data = $this->getDataAsArray();
+        
+        if (isset($data['@']))
         {
-            return $this->data['@'];
+            return $data['@'];
         }
 
         throw new Exception('Cannot convert to string, since value is missing!');
@@ -278,12 +426,12 @@ class Craur
 
     public function toJsonString()
     {
-        return json_encode($this->data);
+        return json_encode($this->getDataAsArray());
     }
 
     public function toXmlString()
     {
-        return $this->convertNodeDataToXml($this->data);
+        return $this->convertNodeDataToXml($this->getDataAsArray());
     }
 
     protected function convertNodeDataToXml($data)
