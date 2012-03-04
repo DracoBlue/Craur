@@ -1,7 +1,6 @@
 <?php
 error_reporting(E_ALL | E_STRICT);
-require_once('Craur.class.php');
-
+require_once('../Craur.class.php');
 
 $xml_string = <<<XMLSTRING
 <feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
