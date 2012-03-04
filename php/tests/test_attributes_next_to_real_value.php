@@ -1,9 +1,9 @@
 <?php
+include(dirname(__FILE__) . '/../bootstrap_for_test.php');
+
 /*
  * @see <https://github.com/DracoBlue/Craur/issues/1>
  */
-error_reporting(E_ALL | E_STRICT);
-require_once('../Craur.class.php');
 
 $node = Craur::createFromJson(json_encode(array(
     'feed' => array(
@@ -20,3 +20,4 @@ assert('Example Feed' === $node->get('feed.title'));
  */
 assert(strpos($node->toJsonString(), 'Example Feed') > 0);
 assert(strpos($node->toXmlString(), 'Example Feed') > 0);
+echo "hai";

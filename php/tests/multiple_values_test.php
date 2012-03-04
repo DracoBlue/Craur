@@ -1,6 +1,5 @@
 <?php
-error_reporting(E_ALL | E_STRICT);
-require_once('../Craur.class.php');
+include(dirname(__FILE__) . '/../bootstrap_for_test.php');
 
 $node = Craur::createFromJson(json_encode(array(
     'feed' => array(
