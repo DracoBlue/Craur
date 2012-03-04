@@ -40,10 +40,20 @@ For craur it does not matter if you have an array or a simple object. Both calls
 This example is how it looks like if you parse a simple atom-feed with craur.
 
     $craur_node = Craur::createFromXml($xml_string);
-    var_dump($craur_node->->get('feed.@xmlns')); // http://www.w3.org/2005/Atom
+    var_dump($craur_node->get('feed.@xmlns')); // http://www.w3.org/2005/Atom
     foreach ($craur_node->get('feed.entry.link[]') as $link) {
         var_dump($link->get('@href'));
     }
+
+If you want to see more examples, please checkout the `php/tests/` folder. It contains a lot of examples.
+
+## Tests
+
+You can run the tests with:
+
+    make test
+
+The tests are located at `php/tests/`.
 
 ## Changelog
 
