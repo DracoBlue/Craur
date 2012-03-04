@@ -1,0 +1,22 @@
+<?php
+/*
+ * @see <https://github.com/DracoBlue/Craur/issues/1>
+ */
+error_reporting(E_ALL | E_STRICT);
+require_once('../Craur.class.php');
+
+$node = Craur::createFromJson(json_encode(array(
+    'feed' => array(
+        'title' => array(
+            '@' => 'Example Feed',
+            '@lang' => 'en'
+        )
+    )
+)));
+
+assert('Example Feed' === $node->get('feed.title'));
+/*
+ * So this Example Feed should be in the xml and json response
+ */
+assert(strpos($node->toJsonString(), 'Example Feed') > 0);
+assert(strpos($node->toXmlString(), 'Example Feed') > 0);
