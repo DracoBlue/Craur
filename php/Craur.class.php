@@ -326,6 +326,18 @@ class Craur
         {
             if (substr($key, 0, 1) === '@')
             {
+                /*
+                 * Ok, just an attribute (we made them in a recursion before
+                 * this element)
+                 */
+                if ($key === '@')
+                {
+                    /*
+                     * Nice, we finally have the value:
+                     */
+                    $result_buffer[] = htmlspecialchars($value);
+                }
+                
                 continue;
             }
 
