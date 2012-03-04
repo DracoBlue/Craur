@@ -8,11 +8,11 @@ help:
 
 test:
 
-	make test-php
+	@make test-php
 
 test-php:
 
-	cd php/tests && ls *.php | while read file; do echo "Executing: $$file"; php "$$file" && echo "   -> ok!";done
+	@cd php/tests && ls *.php | while read file; do echo "Executing: $$file"; php "$$file" && echo "   -> ok!";done
 
 .PHONY: test help
 
