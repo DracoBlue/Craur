@@ -2,6 +2,8 @@
 
 This is still work in progress. But release early and release often :).
 
+[![Build Status](https://secure.travis-ci.org/DracoBlue/Craur.png?branch=master)](http://travis-ci.org/DracoBlue/Craur)
+
 The library craur has two main purposes:
 
 1. Implement a convention to convert XML to JSON without loosing any information
