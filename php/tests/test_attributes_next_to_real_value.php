@@ -20,4 +20,3 @@ assert('Example Feed' === $node->get('feed.title'));
  */
 assert(strpos($node->toJsonString(), 'Example Feed') > 0);
 assert(strpos($node->toXmlString(), 'Example Feed') > 0);
-echo "hai";
