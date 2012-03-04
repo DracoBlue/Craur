@@ -25,15 +25,18 @@ $node = Craur::createFromJson(json_encode(array(
     )
 )));
 
-assert('http://www.w3.org/2005/Atom' === $node->get('feed.@xmlns'));
-assert('Example Feed' === $node->get('feed.title'));
+$values = $node->getValues(
+    array(
+        'title' => 'feed.title',
+        'title_language' => 'feed.title.@lang',
+        'author_name' => 'feed.author.name',
+        'author_email' => 'feed.author.email'
+    )
+);
 
-$titles = $node->get('feed.title[]');
-assert('Example Feed' === (string) $titles[0]);
+assert($values['title'] === 'Example Feed');
+assert($values['title_language'] === 'en');
+assert($values['author_name'] === 'John Doe');
+assert($values['author_email'] === 'johndoe@example.com');
 
-foreach ($node->get('feed.link[]') as $link) {
-    assert(in_array($link->get('@href'), array('http://example.org/feed/', 'http://example.org')));
-}
 
-assert(strlen($node->toXmlString()));
-assert(strlen($node->toJsonString()));

@@ -125,7 +125,29 @@ class Craur
     {
         $this->data = $data;
     }
-
+    
+    public function getValues(array $paths_map, array $default_values = array())
+    {
+        $values = array();
+        
+        foreach ($paths_map as $value_key => $path)
+        {
+            if (array_key_exists($value_key, $default_values))
+            {
+                /*
+                 * Yay, we have a default value!
+                 */
+                $values[$value_key] = $this->get($path, $default_values[$value_key]);
+            }
+            else
+            {
+                $values[$value_key] = $this->get($path);
+            } 
+        }
+        
+        return $values;   
+    }
+    
     public function get($path, $default_value = null)
     {
         $current_node = $this->data;

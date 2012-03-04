@@ -48,6 +48,7 @@ This example is how it looks like if you parse a simple atom-feed with craur.
 ## Changelog
 
 - 1.0-dev
+  - added `Craur#getValues` to return multiple paths at once
   - split up the tests into separate files
   - added Makefile (do `make test` to execute tests)
   - added default_value for `Craur->get($path, $default_value)`
