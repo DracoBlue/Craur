@@ -2,7 +2,7 @@
 error_reporting(E_ALL | E_STRICT);
 require_once('../Craur.class.php');
 
-$xml_string = file_get_contents(__DIR__ . '/fixtures/working_feed.xml');
+$xml_string = file_get_contents(dirname(__FILE__) . '/fixtures/working_feed.xml');
 $node = Craur::createFromXml($xml_string);
 
 /*
