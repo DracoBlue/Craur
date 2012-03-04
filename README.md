@@ -27,15 +27,19 @@ Now you have to use `item.link[0]` to query for the first one. If you are conver
 
 With craur querying for this value looks like this:
 
-    craur_node.get('item.link') // gets: "http://example.org"
+    $craur_node->get('item.link') // gets: "http://example.org"
 
 And if you want to have an array, you do it like this:
 
-    craur_node.get('item.link[]') // gets: ["http://example.org", "http://subdomain.example.org"]
+    $craur_node->get('item.link[]') // gets: ["http://example.org", "http://subdomain.example.org"]
 
 For craur it does not matter if you have an array or a simple object. Both calls will work.
 
-## Example in php
+You may even define a default value, in case the property is optional:
+
+    $craur_node->get('item.description', 'Default Text!') // returns 'Default Text!'
+
+## Example in PHP
 
 This example is how it looks like if you parse a simple atom-feed with craur.
 
