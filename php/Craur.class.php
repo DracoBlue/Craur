@@ -4,11 +4,31 @@ class Craur
 {
     protected $data = null;
 
+    /**
+     * Create a new `Craur` from a given JSON-string.
+     * 
+     * @example 
+     *     $node = Craur::createFromJson('{"book": {"authors": ["Hans", "Paul"]}}');
+     *     $authors = $node->get('book.authors[]');
+     *     assert(count($authors) == 2);
+     * 
+     * @return Craur
+     */
     static function createFromJson($json_string)
     {
         return new Craur(json_decode($json_string, true));
     }
 
+    /**
+     * Create a new `Craur` from a given XML-string.
+     * 
+     * @example 
+     *     $node = Craur::createFromXml('<book><author>Hans</author><author>Paul</author></book>');
+     *     $authors = $node->get('book.author[]');
+     *     assert(count($authors) == 2);
+     * 
+     * @return Craur
+     */
     static function createFromXml($xml_string)
     {
         $node = new DOMDocument('1.0', 'utf-8');
@@ -126,6 +146,34 @@ class Craur
         $this->data = $data;
     }
     
+    /**
+     * Return multiple values at once. If a given path is not set, one can use
+     * the `$default_values` array to specify a default. If a path is not set
+     * and no default value is given an exception will be thrown.
+     * 
+     * @param {String[String]} $paths_map A map of values `$paths_map[$key_in_values]=$path_in_craur`
+     * @param {String[String]} $default_values A map of default values `$paths_map[$key_in_values]=$default_value`
+     * 
+     * @example
+     *     $node = Craur::createFromJson('{"book": {"name": "MyBook", "authors": ["Hans", "Paul"]}}');
+     * 
+     *     $values = $node->getValues(
+     *         array(
+     *             'name' => 'book.name',
+     *             'book_price' => 'price',
+     *             'first_author' => 'book.authors'
+     *         ),
+     *         array(
+     *             'book_price' => 20
+     *         )
+     *     );
+     * 
+     *     assert($values['name'] == 'MyBook');
+     *     assert($values['book_price'] == '20');
+     *     assert($values['first_author'] == 'Hans');
+     * 
+     * @return $values[String][]
+     */
     public function getValues(array $paths_map, array $default_values = array())
     {
         $values = array();
@@ -148,6 +196,26 @@ class Craur
         return $values;   
     }
     
+    /**
+     * Returns the value at a given path in the object. If the given path does
+     * not exist and an explicit `$default_value` is set: the `$default_value`
+     * will be returned. 
+     * 
+     * @param {String} $path The path to the value (e.g. `book.name` or `book.authors[]`)
+     * @param {mixed} $default_value The default value, which will be returned if the path has no value
+     * 
+     * @example
+     *     $node = Craur::createFromJson('{"book": {"name": "MyBook", "authors": ["Hans", "Paul"]}}');
+     * 
+     *     $book = $node->get('book');
+     *     assert($book->get('name') == 'MyBook');
+     *     assert($book->get('price', 20) == 20);
+     * 
+     *     $authors = $node->get('book.authors[]');
+     *     assert(count($authors) == 2);
+     * 
+     * @return mixed
+     */
     public function get($path, $default_value = null)
     {
         $current_node = $this->data;
@@ -290,11 +358,21 @@ class Craur
         throw new Exception('Cannot convert to string, since value is missing!');
     }
 
+    /**
+     * Return the object as a json string. Can be loaded from `Craur::createFromJson`.
+     * 
+     * @return {String}
+     */
     public function toJsonString()
     {
         return json_encode($this->data);
     }
 
+    /**
+     * Return the object as a xml string. Can be loaded from `Craur::createFromXml`.
+     * 
+     * @return {String}
+     */
     public function toXmlString()
     {
         return $this->convertNodeDataToXml($this->data);

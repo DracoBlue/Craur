@@ -59,9 +59,70 @@ You can run the tests with:
 
 The tests are located at `php/tests/`.
 
+## Api
+
+### Craur::createFromJson($json_string) : Craur
+
+Will create and return a new craur instance for the given JSON string.
+
+     $node = Craur::createFromJson('{"book": {"authors": ["Hans", "Paul"]}}');
+     $authors = $node->get('book.authors[]');
+     assert(count($authors) == 2);
+
+### Craur::createFromXml($xml_string) : Craur
+
+Will create and return a new craur instance for the given XML string.
+
+      $node = Craur::createFromXml('<book><author>Hans</author><author>Paul</author></book>');
+      $authors = $node->get('book.author[]');
+      assert(count($authors) == 2);
+
+### Craur#get($path[, $default_value]) : Craur|mixed 
+
+Returns the value at a given path in the object. If the given path does not exist and an explicit `$default_value` is set: the `$default_value` will be returned. 
+
+    $node = Craur::createFromJson('{"book": {"name": "MyBook", "authors": ["Hans", "Paul"]}}');
+    
+    $book = $node->get('book');
+    assert($book->get('name') == 'MyBook');
+    assert($book->get('price', 20) == 20);
+    
+    $authors = $node->get('book.authors[]');
+    assert(count($authors) == 2);
+
+### Craur#getValues(array $paths_map[, array $default_values]) : mixed[]
+
+Return multiple values at once. If a given path is not set, one can use the `$default_values` array to specify a default. If a path is not set and no default value is given an exception will be thrown.
+
+    $node = Craur::createFromJson('{"book": {"name": "MyBook", "authors": ["Hans", "Paul"]}}');
+    
+    $values = $node->getValues(
+        array(
+            'name' => 'book.name',
+            'book_price' => 'price',
+            'first_author' => 'book.authors'
+        ),
+        array(
+            'book_price' => 20
+        )
+    );
+    
+    assert($values['name'] == 'MyBook');
+    assert($values['book_price'] == '20');
+    assert($values['first_author'] == 'Hans');
+
+### Craur#toJsonString() : String
+
+Return the object as a json string. Can be loaded from `Craur::createFromJson`.
+
+### Craur#toXmlString() : String
+
+Return the object as a xml string. Can be loaded from `Craur::createFromXml`.
+
 ## Changelog
 
 - 1.0-dev
+  - added lots of phpdoc
   - Makefile uses ./run_tests.sh wrapper, to fail properly if one of the tests fails
   - it's now possible to retrieve a value of the first array element
   - Craur#get now also returns associative arrays as new Craur-objects, instead of failing
