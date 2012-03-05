@@ -226,26 +226,9 @@ class Craur
             }
 
             /*
-             * It's an array, but it has a '@' key,
-             * so we will use that as value.
+             * Associative array - let's return it as Craur node!
              */
-            if (isset($current_node['@']))
-            {
-                return $current_node['@'];
-            }
-
-            /*
-             * Associative array :( - no idea what to do now!
-             */
-            if (func_num_args() < 2)
-            {
-                /*
-                 * If we have no default_value parameter supplied
-                 */
-                throw new Exception('Path not found: ' . $path);
-            }
-            
-            return $default_value;            
+            return new Craur($current_node);
         }
 
         /*
