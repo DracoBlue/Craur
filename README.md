@@ -1,8 +1,8 @@
 # Craur
 
-This is still work in progress. But release early and release often :).
-
-[![Build Status](https://secure.travis-ci.org/DracoBlue/Craur.png?branch=master)](http://travis-ci.org/DracoBlue/Craur)
+* Version: 1.0.0
+* Date: 2012/03/05
+* Build Status: [![Build Status](https://secure.travis-ci.org/DracoBlue/Craur.png?branch=master)](http://travis-ci.org/DracoBlue/Craur)
 
 The library craur has two main purposes:
 
@@ -121,7 +121,7 @@ Return the object as a xml string. Can be loaded from `Craur::createFromXml`.
 
 ## Changelog
 
-- 1.0-dev
+- 1.0.0 (2012/03/05)
   - added lots of phpdoc
   - Makefile uses ./run_tests.sh wrapper, to fail properly if one of the tests fails
   - it's now possible to retrieve a value of the first array element
