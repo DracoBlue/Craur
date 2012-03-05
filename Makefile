@@ -12,7 +12,7 @@ test:
 
 test-php:
 
-	@cd php/tests && ls *.php | while read file; do echo "Executing: $$file"; php "$$file" && echo "   -> ok!";done
+	@./run_tests.sh
 
 .PHONY: test help
 
