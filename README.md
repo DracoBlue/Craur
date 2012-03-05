@@ -61,7 +61,7 @@ The tests are located at `php/tests/`.
 
 ## Api
 
-### Craur::createFromJson($json_string) : Craur
+### Craur::createFromJson(`$json_string`) : `Craur`
 
 Will create and return a new craur instance for the given JSON string.
 
@@ -69,7 +69,7 @@ Will create and return a new craur instance for the given JSON string.
      $authors = $node->get('book.authors[]');
      assert(count($authors) == 2);
 
-### Craur::createFromXml($xml_string) : Craur
+### Craur::createFromXml(`$xml_string`) : `Craur`
 
 Will create and return a new craur instance for the given XML string.
 
@@ -77,7 +77,7 @@ Will create and return a new craur instance for the given XML string.
       $authors = $node->get('book.author[]');
       assert(count($authors) == 2);
 
-### Craur#get($path[, $default_value]) : Craur|mixed 
+### Craur#get(`$path[, $default_value]`) : `Craur`|`mixed` 
 
 Returns the value at a given path in the object. If the given path does not exist and an explicit `$default_value` is set: the `$default_value` will be returned. 
 
@@ -90,7 +90,7 @@ Returns the value at a given path in the object. If the given path does not exis
     $authors = $node->get('book.authors[]');
     assert(count($authors) == 2);
 
-### Craur#getValues(array $paths_map[, array $default_values]) : mixed[]
+### Craur#getValues(`array $paths_map[, array $default_values]`) : `mixed[]`
 
 Return multiple values at once. If a given path is not set, one can use the `$default_values` array to specify a default. If a path is not set and no default value is given an exception will be thrown.
 
@@ -111,11 +111,11 @@ Return multiple values at once. If a given path is not set, one can use the `$de
     assert($values['book_price'] == '20');
     assert($values['first_author'] == 'Hans');
 
-### Craur#toJsonString() : String
+### Craur#toJsonString() : `String`
 
 Return the object as a json string. Can be loaded from `Craur::createFromJson`.
 
-### Craur#toXmlString() : String
+### Craur#toXmlString() : `String`
 
 Return the object as a xml string. Can be loaded from `Craur::createFromXml`.
 
