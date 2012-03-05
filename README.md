@@ -6,7 +6,7 @@ This is still work in progress. But release early and release often :).
 
 The library craur has two main purposes:
 
-1. Make writing Xml/Json Importers very convenient (query for an element or exactly one element)
+1. Make writing Xml/Json Importers very convenient (query for multiple elements or exactly one element)
 2. Implement a convention to convert XML to JSON without loosing any information
 
 ## What is wrong with vanilla JSON?
