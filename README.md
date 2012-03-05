@@ -62,6 +62,7 @@ The tests are located at `php/tests/`.
 ## Changelog
 
 - 1.0-dev
+  - it's now possible to retrieve a value of the first array element
   - Craur#get now also returns associative arrays as new Craur-objects, instead of failing
   - added bootstrap_for_test.php, so we can properly fail on warnings/assertions
   - added `Craur#getValues` to return multiple paths at once

@@ -165,6 +165,15 @@ class Craur
          */
         foreach (explode('.', $path) as $part)
         {
+            if (is_array($current_node) && !isset($current_node[$part]) && isset($current_node[0]))
+            {
+                /*
+                 * We have a non associative array, maybe we want just the
+                 * first element?
+                 */
+                $current_node = $current_node[0];
+            }
+            
             if (!isset($current_node[$part]))
             {
                 if (func_num_args() < 2)
