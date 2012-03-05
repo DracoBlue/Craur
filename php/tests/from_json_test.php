@@ -24,11 +24,11 @@ $node = Craur::createFromJson(json_encode(array(
     )
 )));
 
-assert('http://www.w3.org/2005/Atom' === $node->get('feed.@xmlns'));
-assert('Example Feed' === $node->get('feed.title'));
+assert('http://www.w3.org/2005/Atom' == $node->get('feed.@xmlns'));
+assert('Example Feed' == $node->get('feed.title'));
 
 $titles = $node->get('feed.title[]');
-assert('Example Feed' === (string) $titles[0]);
+assert('Example Feed' == $titles[0]);
 
 foreach ($node->get('feed.link[]') as $link) {
     assert(in_array($link->get('@href'), array('http://example.org/feed/', 'http://example.org')));

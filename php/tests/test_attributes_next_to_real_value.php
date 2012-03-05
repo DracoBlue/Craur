@@ -14,7 +14,7 @@ $node = Craur::createFromJson(json_encode(array(
     )
 )));
 
-assert('Example Feed' === $node->get('feed.title'));
+assert('Example Feed' == $node->get('feed.title'));
 /*
  * So this Example Feed should be in the xml and json response
  */

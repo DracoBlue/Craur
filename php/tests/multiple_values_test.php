@@ -33,9 +33,9 @@ $values = $node->getValues(
     )
 );
 
-assert($values['title'] === 'Example Feed');
-assert($values['title_language'] === 'en');
-assert($values['author_name'] === 'John Doe');
-assert($values['author_email'] === 'johndoe@example.com');
+assert($values['title'] == 'Example Feed');
+assert($values['title_language'] == 'en');
+assert($values['author_name'] == 'John Doe');
+assert($values['author_email'] == 'johndoe@example.com');
 
 
