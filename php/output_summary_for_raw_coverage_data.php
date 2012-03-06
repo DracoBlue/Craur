@@ -91,9 +91,13 @@ foreach ($full_report as $coverage_file => $coverage_data)
 }
 
 $overall_code_coverage = 100 * $overall_covered_statements / $overall_total_statements;
+echo "" . PHP_EOL;
 if ($overall_code_coverage < $minimum_code_coverage)
 {
-    echo "" . PHP_EOL;
     echo "Required at least: $minimum_code_coverage% code coverage, but had just $overall_code_coverage%!" . PHP_EOL;
     exit(1);
+}
+else
+{
+    echo "Everything tested. Awesome!" . PHP_EOL;
 }
