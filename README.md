@@ -1,6 +1,6 @@
 # Craur
 
-* Version: 1.1.0
+* Version: 1.2-dev
 * Date: 2012/03/06
 * Build Status: [![Build Status](https://secure.travis-ci.org/DracoBlue/Craur.png?branch=master)](http://travis-ci.org/DracoBlue/Craur)
 
@@ -121,6 +121,8 @@ Return the object as a xml string. Can be loaded from `Craur::createFromXml`.
 
 ## Changelog
 
+- 1.2-dev
+  - initialize the Craur also with just a plain php array
 - 1.1.0 (2012/03/06)
   - throw fatal error in case of failed assertion or an exception
   - throw error on invalid json
