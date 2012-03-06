@@ -11,7 +11,6 @@ ls *.php | while read file
 do
     echo "Executing: $file"
     php "$file" -- $raw_code_coverage_file
-    echo "Done!"
     current_exit_code="${?}"
     if [ "${current_exit_code}" -ne "0" ]
     then
