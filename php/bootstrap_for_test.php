@@ -11,23 +11,15 @@ class AssertionException extends Exception
 {
     static function throwFromAssertion($file, $line, $message)
     {
-        $exception = new AssertionException($message);
-        $exception->setFileAndLine($file, $line);
-        throw $exception;
+        restore_error_handler();
+        trigger_error($message . ' in ' . $file . ' on line ' . $line . "\n", E_USER_ERROR);
     }
     
     static function throwFromError($code, $message, $file, $line)
     {
         restore_error_handler();
-        $exception = new AssertionException($message);
-        $exception->setFileAndLine($file, $line);
-        throw $exception;
-    }
-    
-    public function setFileAndLine($file, $line)
-    {
-        $this->file = $file;
-        $this->line = $line;
+        list($me, $callee) = debug_backtrace(2);
+        trigger_error($message . ' in ' . $callee['file'] . ' on line ' . $callee['line'] . "\n", E_USER_ERROR);
     }
 }
 

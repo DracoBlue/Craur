@@ -1,6 +1,6 @@
 # Craur
 
-* Version: 1.0.0
+* Version: 1.0-dev
 * Date: 2012/03/05
 * Build Status: [![Build Status](https://secure.travis-ci.org/DracoBlue/Craur.png?branch=master)](http://travis-ci.org/DracoBlue/Craur)
 
@@ -121,6 +121,8 @@ Return the object as a xml string. Can be loaded from `Craur::createFromXml`.
 
 ## Changelog
 
+- 1.0-dev
+  - throw fatal error in case of failed assertion or an exception
 - 1.0.0 (2012/03/05)
   - added lots of phpdoc
   - Makefile uses ./run_tests.sh wrapper, to fail properly if one of the tests fails
