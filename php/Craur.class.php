@@ -62,10 +62,6 @@ class Craur
         $namespaces = array_reverse($namespaces, true);
         foreach ($namespaces as $namespace_name => $namespace_uri)
         {
-            if (!isset($data[$root_node_name]))
-            {
-                $data[$root_node_name] = array();
-            }
             $data[$root_node_name]['@' . $namespace_name] = $namespace_uri;
         }
 
