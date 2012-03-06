@@ -122,9 +122,10 @@ Return the object as a xml string. Can be loaded from `Craur::createFromXml`.
 ## Changelog
 
 - 1.2-dev
+  - added minimum code coverage for the tests to make a successful build
   - initialize the Craur also with just a plain php array
   - added summary for code coverage as text
-  - added experimental support for clover.xml code coverage files
+  - added (disabled) experimental support for clover.xml code coverage files
 - 1.1.0 (2012/03/06)
   - throw fatal error in case of failed assertion or an exception
   - throw error on invalid json

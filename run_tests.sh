@@ -26,6 +26,11 @@ cd ../../
 #enable clover for your project, if you need it. so long, disabled!
 #php php/create_clover_xml_for_raw_coverage_data.php $raw_code_coverage_file $clover_file
 echo ""
-php php/output_summary_for_raw_coverage_data.php $raw_code_coverage_file $clover_file
-rm $raw_code_coverage_file
+php php/output_summary_for_raw_coverage_data.php $raw_code_coverage_file 100
+coverage_exit_code="${?}"
 echo ""
+rm $raw_code_coverage_file
+if [ "${coverage_exit_code}" -ne "0" ]
+then
+    exit ${coverage_exit_code}
+fi

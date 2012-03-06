@@ -1,6 +1,7 @@
 <?php
 
 $source_file = $argv[1];
+$minimum_code_coverage = (int) $argv[2];
 $ignore_files = array('bootstrap_for_test.php');
 
 $full_report = array();
@@ -38,6 +39,9 @@ foreach (explode(PHP_EOL, file_get_contents($source_file)) as $raw_line)
 
 $base_dir = dirname(dirname(__FILE__));
 
+$overall_total_statements = 0;
+$overall_covered_statements = 0;
+
 echo " Code Coverage " . PHP_EOL;
 echo "===============" . PHP_EOL;
 echo "" . PHP_EOL;
@@ -57,6 +61,8 @@ foreach ($full_report as $coverage_file => $coverage_data)
             $total_statements++;
         }
     }
+    $overall_covered_statements += $covered_statements;
+    $overall_total_statements += $total_statements;
     echo "   - "  . str_pad(floor($covered_statements*100/$total_statements), 3, ' ', STR_PAD_LEFT). "% " . substr($coverage_file, strlen($base_dir) + 1)  . PHP_EOL;
 }
 echo "" . PHP_EOL;
@@ -82,4 +88,12 @@ foreach ($full_report as $coverage_file => $coverage_data)
             echo basename($coverage_file) . ":" . str_pad($line, strlen($max_line)) . " > " . $coverage_file_content_cache[$coverage_file][$line - 1] . PHP_EOL;
         }
     }
+}
+
+$overall_code_coverage = 100 * $overall_covered_statements / $overall_total_statements;
+if ($overall_code_coverage < $minimum_code_coverage)
+{
+    echo "" . PHP_EOL;
+    echo "Required at least: $minimum_code_coverage% code coverage, but had just $overall_code_coverage%!" . PHP_EOL;
+    exit(1);
 }
