@@ -8,7 +8,6 @@ try
 }
 catch (Exception $exception)
 {
-    throw $exception;
     /*
      * Great, it broke! :)
      */

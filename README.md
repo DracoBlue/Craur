@@ -1,7 +1,7 @@
 # Craur
 
-* Version: 1.0-dev
-* Date: 2012/03/05
+* Version: 1.1.0
+* Date: 2012/03/06
 * Build Status: [![Build Status](https://secure.travis-ci.org/DracoBlue/Craur.png?branch=master)](http://travis-ci.org/DracoBlue/Craur)
 
 The library craur has two main purposes:
@@ -121,7 +121,7 @@ Return the object as a xml string. Can be loaded from `Craur::createFromXml`.
 
 ## Changelog
 
-- 1.0-dev
+- 1.1.0 (2012/03/06)
   - throw fatal error in case of failed assertion or an exception
   - throw error on invalid json
 - 1.0.0 (2012/03/05)
