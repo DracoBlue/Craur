@@ -108,19 +108,7 @@ class Craur
             foreach ($node->attributes as $attribute_node)
             {
                 $key = '@' . $attribute_node->nodeName;
-
-                if (isset($data[$key]))
-                {
-                    if (!is_array($data[$key]) || !isset($data[$key][0]))
-                    {
-                        $data[$key] = array($data[$key]);
-                    }
-                    $data[$key][] = $attribute_node->nodeValue;
-                }
-                else
-                {
-                    $data[$key] = $attribute_node->nodeValue;
-                }
+                $data[$key] = $attribute_node->nodeValue;
             }
         }
 
