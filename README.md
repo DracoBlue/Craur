@@ -123,6 +123,7 @@ Return the object as a xml string. Can be loaded from `Craur::createFromXml`.
 
 - 1.0-dev
   - throw fatal error in case of failed assertion or an exception
+  - throw error on invalid json
 - 1.0.0 (2012/03/05)
   - added lots of phpdoc
   - Makefile uses ./run_tests.sh wrapper, to fail properly if one of the tests fails

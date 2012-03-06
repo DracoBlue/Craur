@@ -16,7 +16,14 @@ class Craur
      */
     static function createFromJson($json_string)
     {
-        return new Craur(json_decode($json_string, true));
+        $data = @json_decode($json_string, true);
+        
+        if (!$data)
+        {
+            throw new Exception('Invalid json: ' . $json_string);
+        }
+        
+        return new Craur($data);
     }
 
     /**
