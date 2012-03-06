@@ -369,14 +369,9 @@ class Craur
         return $this->convertNodeDataToXml($this->data);
     }
 
-    protected function convertNodeDataToXml($data)
+    protected function convertNodeDataToXml(array $data)
     {
-        if (!is_array($data))
-        {
-            return htmlspecialchars($data);
-        }
-
-        if (is_array($data) && isset($data['@']) && count($data) === 1)
+        if (isset($data['@']) && count($data) === 1)
         {
             return htmlspecialchars($data['@']);
         }
