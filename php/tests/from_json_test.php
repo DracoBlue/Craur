@@ -36,3 +36,17 @@ foreach ($node->get('feed.link[]') as $link) {
 
 assert(strlen($node->toXmlString()));
 assert(strlen($node->toJsonString()));
+
+
+try 
+{
+    $author_string = $node->get('feed.author')->__toString();
+    assert(false);
+}
+catch (Exception $exception)
+{
+    /*
+     * It should not be possible to convert the author to string,
+     * because it has no value.
+     */
+}
