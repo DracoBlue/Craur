@@ -46,6 +46,7 @@ $clover_xml = array(
             ),
             'package' => array(
                 '@name' => $package_name,
+                'metrics' => array(),
                 'file' => array()
             )
         )
@@ -87,6 +88,11 @@ foreach ($full_report as $coverage_file => $coverage_data)
     $clover_xml['coverage']['project']['metrics']['@coveredelements'] += $covered_statements;
     $clover_xml['coverage']['project']['metrics']['@coveredstatements'] += $covered_statements;
 }
+
+$clover_xml['coverage']['project']['package']['metrics']['@elements'] = $clover_xml['coverage']['project']['metrics']['@elements'];
+$clover_xml['coverage']['project']['package']['metrics']['@coveredelements'] = $clover_xml['coverage']['project']['metrics']['@coveredelements'];
+$clover_xml['coverage']['project']['package']['metrics']['@statements'] = $clover_xml['coverage']['project']['metrics']['@statements'];
+$clover_xml['coverage']['project']['package']['metrics']['@coveredstatements'] = $clover_xml['coverage']['project']['metrics']['@coveredstatements'];
 
 require_once(dirname(__FILE__) . '/Craur.class.php');
 $report_node = new Craur($clover_xml);
