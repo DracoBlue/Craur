@@ -1,6 +1,7 @@
 <?php
 
 $package_name = 'craur';
+$ignore_files = array('bootstrap_for_test.php');
 $source_file = $argv[1];
 $target_file = $argv[2];
 
@@ -15,6 +16,10 @@ foreach (explode(PHP_EOL, file_get_contents($source_file)) as $raw_line)
     $line = json_decode($raw_line, true);
     foreach ($line as $coverage_file => $coverage_data)
     {
+        if (in_array(basename($coverage_file), $ignore_files))
+        {
+            continue ;
+        }
         if (!isset($full_report[$coverage_file]))
         {
             $full_report[$coverage_file] = array();
@@ -65,26 +70,31 @@ foreach ($full_report as $coverage_file => $coverage_data)
         'line' => array()
     );
     $covered_statements = 0;
+    $total_statements = 0;
     foreach ($coverage_data as $line => $count)
     {
-        if ($count > 0)
+        if ($count > -2)
         {
-            $covered_statements++;
+            if ($count > 0)
+            {
+                $covered_statements++;
+            }
+            $total_statements++;
+            
+            $clover_xml_entry['line'][] = array(
+                '@num' => $line, '@count' => $count, '@type' => 'stmt'
+            );
         }
-        
-        $clover_xml_entry['line'][] = array(
-            '@num' => $line, '@count' => $count, '@type' => 'stmt'
-        );
     }
 
     $clover_xml_entry['metrics']['@coveredelements'] = $covered_statements;
     $clover_xml_entry['metrics']['@coveredstatements'] = $covered_statements;
-    $clover_xml_entry['metrics']['@elements'] = count($clover_xml_entry['line']);
-    $clover_xml_entry['metrics']['@statements'] = count($clover_xml_entry['line']);
+    $clover_xml_entry['metrics']['@elements'] = $total_statements;
+    $clover_xml_entry['metrics']['@statements'] = $total_statements;
     $clover_xml['coverage']['project']['package']['file'][] = $clover_xml_entry;
     
-    $clover_xml['coverage']['project']['metrics']['@elements'] += count($clover_xml_entry['line']);
-    $clover_xml['coverage']['project']['metrics']['@statements'] += count($clover_xml_entry['line']);
+    $clover_xml['coverage']['project']['metrics']['@elements'] += $total_statements;
+    $clover_xml['coverage']['project']['metrics']['@statements'] += $total_statements;
     $clover_xml['coverage']['project']['metrics']['@coveredelements'] += $covered_statements;
     $clover_xml['coverage']['project']['metrics']['@coveredstatements'] += $covered_statements;
 }

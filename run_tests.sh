@@ -23,8 +23,7 @@ do
 done
 
 cd ../../
-## disabled for now
-## php php/create_clover_xml_for_raw_coverage_data.php $raw_code_coverage_file $clover_file
+php php/create_clover_xml_for_raw_coverage_data.php $raw_code_coverage_file $clover_file
 echo ""
 php php/output_summary_for_raw_coverage_data.php $raw_code_coverage_file $clover_file
 rm $raw_code_coverage_file
