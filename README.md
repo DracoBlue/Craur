@@ -90,9 +90,9 @@ Returns the value at a given path in the object. If the given path does not exis
     $authors = $node->get('book.authors[]');
     assert(count($authors) == 2);
 
-### Craur#getValues(`array $paths_map[, array $default_values]`) : `mixed[]`
+### Craur#getValues(`array $paths_map[, array $default_values, $default_value]`) : `mixed[]`
 
-Return multiple values at once. If a given path is not set, one can use the `$default_values` array to specify a default. If a path is not set and no default value is given an exception will be thrown.
+Return multiple values at once. If a given path is not set, one can use the `$default_values` array to specify a default. If a path is not set and no default value is given an exception will be thrown. If you want to have a default value, even if the path does not exist in `$default_values`, you can use `$default_value`.
 
     $node = Craur::createFromJson('{"book": {"name": "MyBook", "authors": ["Hans", "Paul"]}}');
     
@@ -122,6 +122,7 @@ Return the object as a xml string. Can be loaded from `Craur::createFromXml`.
 ## Changelog
 
 - 1.2-dev
+  - added extra `$default_value` optional parameter for Craur#getValues
   - added minimum code coverage for the tests to make a successful build
   - initialize the Craur also with just a plain php array
   - added summary for code coverage as text

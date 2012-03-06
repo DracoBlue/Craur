@@ -38,4 +38,21 @@ assert($values['title_language'] == 'en');
 assert($values['author_name'] == 'John Doe');
 assert($values['author_email'] == 'johndoe@example.com');
 
+/*
+ * Test overall default value
+ */
+$values = $node->getValues(
+    array(
+        'title' => 'feed.title',
+        'non_existant' => 'feed.non_existant',
+        'non_existant2' => 'feed.non_existant2'
+    ),
+    array(
+        'non_existant' => 'test'
+    ),
+    false
+);
 
+assert($values['title'] == 'Example Feed');
+assert($values['non_existant'] === 'test');
+assert($values['non_existant2'] === false);

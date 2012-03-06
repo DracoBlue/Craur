@@ -144,6 +144,7 @@ class Craur
      * 
      * @param {String[String]} $paths_map A map of values `$paths_map[$key_in_values]=$path_in_craur`
      * @param {String[String]} $default_values A map of default values `$paths_map[$key_in_values]=$default_value`
+     * @param {mixed} $default_value A value which can be used as default if even the `$default_values` do not have a key for the path
      * 
      * @example
      *     $node = Craur::createFromJson('{"book": {"name": "MyBook", "authors": ["Hans", "Paul"]}}');
@@ -165,7 +166,7 @@ class Craur
      * 
      * @return $values[String][]
      */
-    public function getValues(array $paths_map, array $default_values = array())
+    public function getValues(array $paths_map, array $default_values = array(), $default_value = null)
     {
         $values = array();
         
@@ -180,7 +181,18 @@ class Craur
             }
             else
             {
-                $values[$value_key] = $this->get($path);
+                if (func_num_args() < 3)
+                {
+                     /*
+                     * If we have no default_value parameter supplied
+                     */
+                    $values[$value_key] = $this->get($path);
+                }
+                else
+                {
+                    $values[$value_key] = $this->get($path, $default_value);
+                }
+                
             } 
         }
         
