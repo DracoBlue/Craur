@@ -1,0 +1,85 @@
+<?php
+
+$source_file = $argv[1];
+$ignore_files = array('bootstrap_for_test.php');
+
+$full_report = array();
+
+foreach (explode(PHP_EOL, file_get_contents($source_file)) as $raw_line)
+{
+    if (empty($raw_line))
+    {
+        continue;
+    }
+    $line = json_decode($raw_line, true);
+    foreach ($line as $coverage_file => $coverage_data)
+    {
+        if (in_array(basename($coverage_file), $ignore_files))
+        {
+            continue ;
+        }
+        if (!isset($full_report[$coverage_file]))
+        {
+            $full_report[$coverage_file] = array();
+        }
+        foreach ($coverage_data as $line => $count)
+        {
+            if (isset($full_report[$coverage_file][$line]))
+            {
+                $full_report[$coverage_file][$line] = max($full_report[$coverage_file][$line], $count);
+            }
+            else
+            {
+                $full_report[$coverage_file][$line] = $count;
+            }
+        }
+    }
+}
+
+$base_dir = dirname(dirname(__FILE__));
+
+echo " Code Coverage " . PHP_EOL;
+echo "===============" . PHP_EOL;
+echo "" . PHP_EOL;
+foreach ($full_report as $coverage_file => $coverage_data)
+{
+    $covered_statements = 0;
+    $total_statements = 0;
+    foreach ($coverage_data as $line => $count)
+    {
+        if ($count > -2)
+        {
+            if ($count > 0)
+            {
+                $covered_statements++;
+            }
+            
+            $total_statements++;
+        }
+    }
+    echo "   - "  . str_pad(floor($covered_statements*100/$total_statements), 3, ' ', STR_PAD_LEFT). "% " . substr($coverage_file, strlen($base_dir) + 1)  . PHP_EOL;
+}
+echo "" . PHP_EOL;
+
+echo " Untested Code " . PHP_EOL;
+echo "===============" . PHP_EOL;
+echo "" . PHP_EOL;
+$coverage_file_content_cache = array();
+
+foreach ($full_report as $coverage_file => $coverage_data)
+{
+    $covered_statements = 0;
+    $total_statements = 0;
+    $max_line = max(array_keys($coverage_data));
+    foreach ($coverage_data as $line => $count)
+    {
+        if ($count == -1)
+        {
+            if (empty($coverage_file_content_cache[$coverage_file]))
+            {
+                $coverage_file_content_cache[$coverage_file] = explode("\n", file_get_contents($coverage_file));
+            }
+            echo basename($coverage_file) . ":" . str_pad($line, strlen($max_line)) . " > " . $coverage_file_content_cache[$coverage_file][$line - 1] . PHP_EOL;
+        }
+    }
+}
