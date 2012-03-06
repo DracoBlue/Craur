@@ -48,11 +48,6 @@ class Craur
 
         $data = self::convertDomNodeToDataArray($node);
 
-        if (!is_array($data))
-        {
-            $data = array('@' => $data);
-        }
-
         $xpath = new DOMXPath($node);
         $root_node_name = $node->documentElement->nodeName;
         $namespaces = array();
