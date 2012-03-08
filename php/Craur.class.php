@@ -350,6 +350,30 @@ class Craur
         return array($current_node);
     }
 
+    public function getWithFilter($path, $filter, $default_value = null)
+    {
+        $has_default_value = (func_num_args() > 2);
+
+        if (!is_callable($filter))
+        {
+            throw new Exception('Cannot use ' . gettype($filter) . ' as filter, only callables allowed!');
+        }
+        
+        try
+        {
+            $value_without_filter = $this->get($path);
+            return $filter($value_without_filter, $path);   
+        }
+        catch (Exception $exception)
+        {
+            if ($has_default_value)
+            {
+                return $default_value;
+            }
+            throw new Exception('Path not found!');
+        }
+    }
+
     public function __toString()
     {
 
