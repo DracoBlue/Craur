@@ -354,6 +354,14 @@ class Craur
     {
         $has_default_value = (func_num_args() > 2);
 
+        $return_multiple = false;
+
+        if (substr($path, -2) === '[]')
+        {
+            $return_multiple = true;
+            $path = substr($path, 0, strlen($path) - 2);
+        }
+        
         if (!is_callable($filter))
         {
             throw new Exception('Cannot use ' . gettype($filter) . ' as filter, only callables allowed!');
@@ -361,8 +369,34 @@ class Craur
         
         try
         {
-            $value_without_filter = $this->get($path);
-            return $filter($value_without_filter, $path);   
+            $values_without_filter = $this->get($path . '[]');
+            $values = array();
+            foreach ($values_without_filter as $value_without_filter)
+            {
+                try 
+                {
+                    $value = $filter($value_without_filter, $path);
+                    if (!$return_multiple)
+                    {
+                        return $value;
+                    }
+                    
+                    $values[] = $value;
+                }
+                catch (Exception $exception)
+                {
+                    /*
+                     * Ok, no match!
+                     */
+                }
+            }
+            
+            if ($return_multiple)
+            {
+                return $values;
+            }
+            
+            throw new Exception('No element for this path found (after filtering)');
         }
         catch (Exception $exception)
         {
