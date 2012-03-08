@@ -43,6 +43,12 @@ $animals = $node->getWithFilter('animals[]', "youngerThenThreeYears");
 assert(count($animals) == 2);
 
 /*
+ * Get all animals, which are less then 3 years old!
+ */
+$first_animal_with_less_then_3_years = $node->getWithFilter('animals', "youngerThenThreeYears");
+assert($first_animal_with_less_then_3_years->get('@name') == 'cat');
+
+/*
  * Get all aliens (hopefully 0)
  */
 $animals = $node->getWithFilter('animals', "isAnAlien", array());
