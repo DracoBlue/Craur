@@ -123,6 +123,7 @@ Return the object as a xml string. Can be loaded from `Craur::createFromXml`.
 
 - 1.3-dev
   - added `getWithFilter($path, Callable $filter[, $default_value])`
+  - added `getValuesWithFilters($path, Callable $filter[, array $default_values, $default_value])`
 - 1.2.0 (2012/03/06)
   - added extra `$default_value` optional parameter for Craur#getValues
   - added minimum code coverage for the tests to make a successful build

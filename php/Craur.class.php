@@ -198,7 +198,69 @@ class Craur
         
         return $values;   
     }
-    
+
+    public function getValuesWithFilters(array $paths_map, array $filters, array $default_values = array(), $default_value = null)
+    {
+        $values = array();
+        
+        foreach ($paths_map as $value_key => $path)
+        {
+            $has_filter = array_key_exists($value_key, $filters);
+            
+            if ($has_filter)
+            {
+                $filter = $filters[$value_key];
+                if (array_key_exists($value_key, $default_values))
+                {
+                    /*
+                     * Yay, we have a default value!
+                     */
+                    $values[$value_key] = $this->getWithFilter($path, $filter, $default_values[$value_key]);
+                }
+                else
+                {
+                    if (func_num_args() < 4)
+                    {
+                         /*
+                         * If we have no default_value parameter supplied
+                         */
+                        $values[$value_key] = $this->getWithFilter($path, $filter);
+                    }
+                    else
+                    {
+                        $values[$value_key] = $this->getWithFilter($path, $filter, $default_value);
+                    }
+                }
+            }
+            else
+            {
+                if (array_key_exists($value_key, $default_values))
+                {
+                    /*
+                     * Yay, we have a default value!
+                     */
+                    $values[$value_key] = $this->get($path, $default_values[$value_key]);
+                }
+                else
+                {
+                    if (func_num_args() < 4)
+                    {
+                         /*
+                         * If we have no default_value parameter supplied
+                         */
+                        $values[$value_key] = $this->get($path);
+                    }
+                    else
+                    {
+                        $values[$value_key] = $this->get($path, $default_value);
+                    }
+                } 
+            }
+        }
+        
+        return $values;   
+    }
+        
     /**
      * Returns the value at a given path in the object. If the given path does
      * not exist and an explicit `$default_value` is set: the `$default_value`
