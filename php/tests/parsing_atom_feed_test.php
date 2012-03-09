@@ -1,6 +1,4 @@
 <?php
-include(dirname(__FILE__) . '/../bootstrap_for_test.php');
-
 $xml_string = file_get_contents(dirname(__FILE__) . '/fixtures/example_atom_feed.xml');
 $document = Craur::createFromXml($xml_string);
 

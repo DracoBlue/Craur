@@ -1,6 +1,4 @@
 <?php
-include(dirname(__FILE__) . '/../bootstrap_for_test.php');
-
 $node = Craur::createFromJson(json_encode(array(
     'feed' => array(
         '@xmlns' => 'http://www.w3.org/2005/Atom',

@@ -5,12 +5,14 @@ cd `dirname $0`
 raw_code_coverage_file=`pwd`"/coverage_raw.txt";
 clover_file=`pwd`"/clover.xml";
 
-cd php/tests
+cd php
+test_directory=`pwd`
+cd tests
 echo -n "" > $raw_code_coverage_file
 ls *.php | while read file
 do
     echo "Executing: $file"
-    php "$file" -- $raw_code_coverage_file
+    php -dauto_prepend_file="$test_directory/bootstrap_for_test.php" "$file" -- $raw_code_coverage_file
     current_exit_code="${?}"
     if [ "${current_exit_code}" -ne "0" ]
     then

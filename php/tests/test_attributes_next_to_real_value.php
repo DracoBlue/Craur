@@ -1,6 +1,4 @@
 <?php
-include(dirname(__FILE__) . '/../bootstrap_for_test.php');
-
 /*
  * @see <https://github.com/DracoBlue/Craur/issues/1>
  */

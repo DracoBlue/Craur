@@ -1,6 +1,4 @@
 <?php
-include (dirname(__FILE__) . '/../bootstrap_for_test.php');
-
 $node = Craur::createFromJson('{"book": {"authors": ["Hans", "Paul"]}}');
 $authors = $node->get('book.authors[]');
 assert(count($authors) == 2);
