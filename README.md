@@ -1,7 +1,7 @@
 # Craur
 
-* Version: 1.3-dev
-* Date: Not yet released
+* Version: 1.3.0
+* Date: 2012/03/09
 * Build Status: [![Build Status](https://secure.travis-ci.org/DracoBlue/Craur.png?branch=master)](http://travis-ci.org/DracoBlue/Craur)
 
 The library craur has two main purposes:
@@ -176,7 +176,7 @@ Return the object as a xml string. Can be loaded from `Craur::createFromXml`.
 
 ## Changelog
 
-- 1.3-dev
+- 1.3.0 (2012/03/09)
   - added `getWithFilter($path, Callable $filter[, $default_value])`
   - added `getValuesWithFilters($path, Callable $filter[, array $default_values, $default_value])`
   - prepend the bootstrap file to all test files
