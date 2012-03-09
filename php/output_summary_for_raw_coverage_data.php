@@ -2,8 +2,10 @@
 
 $source_file = $argv[1];
 $minimum_code_coverage = (int) $argv[2];
-$ignore_files = array('bootstrap_for_test.php');
-
+$ignore_paths = array(
+    dirname(__FILE__) . '/bootstrap_for_test.php',
+    dirname(__FILE__) . '/tests/'
+);
 $full_report = array();
 
 foreach (explode(PHP_EOL, file_get_contents($source_file)) as $raw_line)
@@ -15,9 +17,12 @@ foreach (explode(PHP_EOL, file_get_contents($source_file)) as $raw_line)
     $line = json_decode($raw_line, true);
     foreach ($line as $coverage_file => $coverage_data)
     {
-        if (in_array(basename($coverage_file), $ignore_files))
+        foreach ($ignore_paths as $ignore_path)
         {
-            continue ;
+            if ($ignore_path === substr($coverage_file, 0, strlen($ignore_path)))
+            {
+                continue 2;
+            }
         }
         if (!isset($full_report[$coverage_file]))
         {
