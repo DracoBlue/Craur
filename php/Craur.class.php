@@ -199,6 +199,38 @@ class Craur
         return $values;   
     }
 
+    /**
+     * Works similar to `Craur#getValues`, but can use a callable as filter
+     * object. Before returning the value, the function evaluates
+     * `$filter($value)` and returns this instead.
+     * 
+     * If the `$filter` throws an exception, the value won't be added to the
+     * result.
+     * 
+     * @example
+     *     $node = Craur::createFromJson('{"book": {"name": "MyBook", "authors": ["Hans", "Paul"]}}');
+     *
+     *     $values = $node->getValuesWithFilters(
+     *         array(
+     *             'name' => 'book.name',
+     *             'book_price' => 'price',
+     *             'first_author' => 'book.authors'
+     *         ),
+     *         array(
+     *             'name' => 'strtolower',
+     *             'first_author' => 'strtoupper',
+     *         ),
+     *         array(
+     *             'book_price' => 20
+     *         )
+     *     );
+     *     
+     *     assert($values['name'] == 'mybook');
+     *     assert($values['book_price'] == '20');
+     *     assert($values['first_author'] == 'HANS');
+     * 
+     * @return $values[String][]
+     */ 
     public function getValuesWithFilters(array $paths_map, array $filters, array $default_values = array(), $default_value = null)
     {
         $values = array();
@@ -412,6 +444,32 @@ class Craur
         return array($current_node);
     }
 
+    /**
+     * Works similar to `Craur#get`, but can use a callable as filter object.
+     * Before returning the value, the function evaluates `$filter($value)`
+     * and returns this instead.
+     * 
+     * If the `$filter` throws an exception, the value won't be added to the
+     * result.
+     * 
+     * @example
+     *     function isACheapBook(Craur $value)
+     *     {
+     *         if ($value->get('price') > 20)
+     *         {
+     *             throw new Exception('Is no cheap book!');
+     *         }
+     *         return $value;
+     *     }
+     *     
+     *     $node = Craur::createFromJson('{"books": [{"name":"A", "price": 30}, {"name": "B", "price": 10}, {"name": "C", "price": 15}]}');
+     *     $cheap_books = $node->getWithFilter('books[]', 'isACheapBook');
+     *     assert(count($cheap_books) == 2);
+     *     assert($cheap_books[0]->get('name') == 'B');
+     *     assert($cheap_books[1]->get('name') == 'C');
+     * 
+     * @return mixed
+     */
     public function getWithFilter($path, $filter, $default_value = null)
     {
         $has_default_value = (func_num_args() > 2);
@@ -437,7 +495,7 @@ class Craur
             {
                 try 
                 {
-                    $value = $filter($value_without_filter, $path);
+                    $value = $filter($value_without_filter);
                     if (!$return_multiple)
                     {
                         return $value;

@@ -90,6 +90,36 @@ Returns the value at a given path in the object. If the given path does not exis
     $authors = $node->get('book.authors[]');
     assert(count($authors) == 2);
 
+### Craur#getWithFilter(`$path, $filter[, $default_value]`) : `Craur`|`mixed` 
+
+Works similar to `Craur#get`, but can use a callable as filter object. Before returning the value, the function evaluates `$filter($value)` and returns this instead.
+
+    $node = Craur::createFromJson('{"book": {"name": "MyBook", "authors": ["Hans", "Paul"]}}');
+    
+    $book = $node->get('book');
+    assert($book->get('name') == 'MyBook');
+    assert($book->get('price', 20) == 20);
+    
+    $authors = $node->get('book.authors[]');
+    assert(count($authors) == 2);
+
+The filter can also throw an exception to hide the value from the result set:
+    
+    function isACheapBook(Craur $value)
+    {
+        if ($value->get('price') > 20)
+        {
+            throw new Exception('Is no cheap book!');
+        }
+        return $value;
+    }
+    
+    $node = Craur::createFromJson('{"books": [{"name":"A", "price": 30}, {"name": "B", "price": 10}, {"name": "C", "price": 15}]}');
+    $cheap_books = $node->getWithFilter('books[]', 'isACheapBook');
+    assert(count($cheap_books) == 2);
+    assert($cheap_books[0]->get('name') == 'B');
+    assert($cheap_books[1]->get('name') == 'C');
+
 ### Craur#getValues(`array $paths_map[, array $default_values, $default_value]`) : `mixed[]`
 
 Return multiple values at once. If a given path is not set, one can use the `$default_values` array to specify a default. If a path is not set and no default value is given an exception will be thrown. If you want to have a default value, even if the path does not exist in `$default_values`, you can use `$default_value`.
@@ -110,6 +140,31 @@ Return multiple values at once. If a given path is not set, one can use the `$de
     assert($values['name'] == 'MyBook');
     assert($values['book_price'] == '20');
     assert($values['first_author'] == 'Hans');
+
+### Craur#getValuesWithFilters(`array $paths_map, array $filters [, array $default_values, $default_value]`) : `mixed[]`
+
+Works like `Craur#getValues`, but allows to set filters for each key in the `$path_map`.
+
+    $node = Craur::createFromJson('{"book": {"name": "MyBook", "authors": ["Hans", "Paul"]}}');
+    
+    $values = $node->getValuesWithFilters(
+        array(
+            'name' => 'book.name',
+            'book_price' => 'price',
+            'first_author' => 'book.authors'
+        ),
+        array(
+            'first_author' => 'strtoupper',
+            'name' => 'strtolower'      
+        ),
+        array(
+            'book_price' => 20
+        )
+    );
+    
+    assert($values['name'] == 'MyBook');
+    assert($values['book_price'] == '20');
+    assert($values['first_author'] == 'HANS');
 
 ### Craur#toJsonString() : `String`
 

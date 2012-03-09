@@ -19,7 +19,7 @@ $node = new Craur(array(
     ) 
 ));
 
-function myFilterCallback($value, $path) {
+function myFilterCallback($value) {
     return str_replace('cm', '', $value);
 };
 

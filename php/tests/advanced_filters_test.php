@@ -19,7 +19,7 @@ $node = new Craur(array(
     ) 
 ));
 
-function youngerThenThreeYears(Craur $value, $path)
+function youngerThenThreeYears(Craur $value)
 {
     if ($value->get('@age') < 3)
     {
@@ -29,7 +29,7 @@ function youngerThenThreeYears(Craur $value, $path)
     throw new Exception('Is not younger then three years!');
 };
 
-function isAnAlien(Craur $value, $path)
+function isAnAlien(Craur $value)
 {
     throw new Exception('This is not an alien!');
 };

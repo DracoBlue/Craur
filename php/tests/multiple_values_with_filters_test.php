@@ -23,7 +23,7 @@ $node = Craur::createFromJson(json_encode(array(
     )
 )));
 
-function getFeedLink(Craur $value, $key)
+function getFeedLink(Craur $value)
 {
     if ($value->get('@rel', '') === 'feed')
     {
@@ -33,7 +33,7 @@ function getFeedLink(Craur $value, $key)
     throw new Exception('This is no feed link!');
 }
 
-function getNoFollowLink(Craur $value, $key)
+function getNoFollowLink(Craur $value)
 {
     throw new Exception('This is no nofollow link!');
 }
