@@ -40,6 +40,27 @@ class AssertionException extends Exception
     }
 }
 
+function assertException($callable)
+{
+    $threw_exception = false;
+    
+    try
+    {
+        $callable();
+    }
+    catch (Exception $exception)
+    {
+        $threw_exception = true;
+    }    
+    
+    if (!$threw_exception)
+    {
+        restore_error_handler();
+        list($callee) = debug_backtrace(2);
+        trigger_error('Expected an exception! in ' . $callee['file'] . ' on line ' . $callee['line'] . "\n", E_USER_ERROR);
+    }
+}
+
 assert_options(ASSERT_ACTIVE, 1);
 assert_options(ASSERT_WARNING, 1);
 assert_options(ASSERT_BAIL, 0);
