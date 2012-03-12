@@ -178,7 +178,7 @@ Return the object as a xml string. Can be loaded from `Craur::createFromXml`.
 
 - 1.3.0 (2012/03/09)
   - added `getWithFilter($path, Callable $filter[, $default_value])`
-  - added `getValuesWithFilters($path, Callable $filter[, array $default_values, $default_value])`
+  - added `getValuesWithFilters($path, array $filters[, array $default_values, $default_value])`
   - prepend the bootstrap file to all test files
   - ignore the test files themself in code coverage
 - 1.2.0 (2012/03/06)
