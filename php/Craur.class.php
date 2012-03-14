@@ -132,6 +132,32 @@ class Craur
         return $data;
     }
 
+    /**
+     * Will load the csv file and fill the objects according to the given `$field_mappings`.
+     * 
+     * @example
+     *     // If the file loooks like this:
+     *     // Book Name;Book Year;Author Name
+     *     // My Book;2012;Hans
+     *     // My Book;2012;Paul
+     *     // My second Book;2010;Erwin
+     *     $shelf = Craur::createFromCsvFile('fixtures/books.csv', array(
+     *         'book[].name',
+     *         'book[].year',
+     *         'book[].author[].name',
+     *     ));
+     *     assert(count($shelf->get('book[]')) === 2);
+     *     foreach ($shelf->get('book[]') as $book)
+     *     {
+     *         assert(in_array($book->get('name'), array('My Book', 'My second Book')));
+     *         foreach ($book->get('author[]') as $author)
+     *         {
+     *             assert(in_array($author->get('name'), array('Hans', 'Paul', 'Erwin')));
+     *         }
+     *     }
+     * 
+     * @return Craur  
+     */
     static function createFromCsvFile($file_path, array $field_mappings)
     {
         $file_handle = null;

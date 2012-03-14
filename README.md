@@ -83,17 +83,15 @@ Will load the csv file and fill the objects according to the given `$field_mappi
 
     /*
      * If the file loooks like this:
-     * Book Name;Book Year;Author Name;Author Age
-     * My Book;2012;Hans;32
-     * My Book;2012;Paul;20
-     * My second Book;2010;Erwin;10
+     * Book Name;Book Year;Author Name
+     * My Book;2012;Hans
+     * My Book;2012;Paul
+     * My second Book;2010;Erwin
      */
-    $shelf = Craur::createFromCsvFile('books.csv', array(
+    $shelf = Craur::createFromCsvFile('fixtures/books.csv', array(
         'book[].name',
         'book[].year',
         'book[].author[].name',
-        'book[].author[].age',
-        'book[].reader[].name', // this one does not exist, we do this on purpose!
     ));
     assert(count($shelf->get('book[]')) === 2);
     foreach ($shelf->get('book[]') as $book)
@@ -101,10 +99,9 @@ Will load the csv file and fill the objects according to the given `$field_mappi
         assert(in_array($book->get('name'), array('My Book', 'My second Book')));
         foreach ($book->get('author[]') as $author)
         {
-            assert(in_array($book->get('author.age'), array('32', '20')));
-            assert(in_array($book->get('author.name'), array('Hans', 'Paul')));
+            assert(in_array($author->get('name'), array('Hans', 'Paul', 'Erwin')));
         }
-    }    
+    }  
 
 ### Craur#get(`$path[, $default_value]`) : `Craur`|`mixed` 
 
