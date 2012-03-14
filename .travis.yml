@@ -3,4 +3,4 @@ php:
   - 5.2
   - 5.3
   - 5.4
-script: "make test-php"
+script: "make test"
