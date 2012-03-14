@@ -1,7 +1,7 @@
 # Craur
 
-* Version: 1.3.0
-* Date: 2012/03/09
+* Version: 1.4-dev
+* Date: Not yet released
 * Build Status: [![Build Status](https://secure.travis-ci.org/DracoBlue/Craur.png?branch=master)](http://travis-ci.org/DracoBlue/Craur)
 
 The library craur has two main purposes:
@@ -76,6 +76,35 @@ Will create and return a new craur instance for the given XML string.
       $node = Craur::createFromXml('<book><author>Hans</author><author>Paul</author></book>');
       $authors = $node->get('book.author[]');
       assert(count($authors) == 2);
+
+### Craur::createFromCsvFile(`$file_path, array $field_mappings`) : `Craur`
+
+Will load the csv file and fill the objects according to the given `$field_mappings`.
+
+    /*
+     * If the file loooks like this:
+     * Book Name;Book Year;Author Name;Author Age
+     * My Book;2012;Hans;32
+     * My Book;2012;Paul;20
+     * My second Book;2010;Erwin;10
+     */
+    $shelf = Craur::createFromCsvFile('books.csv', array(
+        'book[].name',
+        'book[].year',
+        'book[].author[].name',
+        'book[].author[].age',
+        'book[].reader[].name', // this one does not exist, we do this on purpose!
+    ));
+    assert(count($shelf->get('book[]')) === 2);
+    foreach ($shelf->get('book[]') as $book)
+    {
+        assert(in_array($book->get('name'), array('My Book', 'My second Book')));
+        foreach ($book->get('author[]') as $author)
+        {
+            assert(in_array($book->get('author.age'), array('32', '20')));
+            assert(in_array($book->get('author.name'), array('Hans', 'Paul')));
+        }
+    }    
 
 ### Craur#get(`$path[, $default_value]`) : `Craur`|`mixed` 
 
@@ -176,6 +205,8 @@ Return the object as a xml string. Can be loaded from `Craur::createFromXml`.
 
 ## Changelog
 
+- 1.4-dev
+  - added `Craur::createFromCsvFile($file_path, array $field_mappings)`
 - 1.3.0 (2012/03/09)
   - added `getWithFilter($path, Callable $filter[, $default_value])`
   - added `getValuesWithFilters($path, Callable $filter[, array $default_values, $default_value])`
