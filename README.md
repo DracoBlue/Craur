@@ -62,7 +62,7 @@ successful test must have 100% code coverage.
 
 ### Constant/Continuous Testing
 
-If you have `inotify-tools` installed, you can use:
+If you have `inotifywait` [linux, apt-get install inotify-tools] or `wait_on` [macosx, port install wait_on] installed, you can use:
 
     make test-constant
 
@@ -212,8 +212,8 @@ Return the object as a xml string. Can be loaded from `Craur::createFromXml`.
 ## Changelog
 
 - 1.4.1 (2012/03/14)
-  - added `make test-constant` (watches for file changes with inotifywait) and
-    runs tests on change
+  - added `make test-constant` (watches for file changes with inotifywait on linux
+    or wait_on on mac osx ) and runs tests on change
 - 1.4.0 (2012/03/14)
   - added `Craur::createFromCsvFile($file_path, array $field_mappings)`
 - 1.3.0 (2012/03/09)
