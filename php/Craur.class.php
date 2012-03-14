@@ -300,7 +300,7 @@ class Craur
      * 
      * @return array
      */
-    static function mergePathEntriesRecursive($entries)
+    static function mergePathEntriesRecursive(array $entries)
     {
         $merged_entries = array();
         
