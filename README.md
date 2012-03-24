@@ -1,7 +1,7 @@
 # Craur
 
-* Version: 1.4.1
-* Date: 2012/03/14
+* Version: 1.5-dev
+* Date: Not yet released
 * Build Status: [![Build Status](https://secure.travis-ci.org/DracoBlue/Craur.png?branch=master)](http://travis-ci.org/DracoBlue/Craur), 100% Code Coverage
 
 The library craur has two main purposes:
@@ -211,6 +211,8 @@ Return the object as a xml string. Can be loaded from `Craur::createFromXml`.
 
 ## Changelog
 
+- 1.5-dev
+  - fixed csv file test
 - 1.4.1 (2012/03/14)
   - added `make test-constant` (watches for file changes with inotifywait on linux
     or wait_on on mac osx ) and runs tests on change

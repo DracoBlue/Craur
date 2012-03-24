@@ -18,8 +18,8 @@ foreach ($shelf->get('book[]') as $book)
         assert($book->get('author.age') == '32');
         foreach ($book->get('author[]') as $author)
         {
-            assert(in_array($book->get('author.age'), array('32', '20')));
-            assert(in_array($book->get('author.name'), array('Hans', 'Paul')));
+            assert(in_array($author->get('age'), array('32', '20')));
+            assert(in_array($author->get('name'), array('Hans', 'Paul')));
         }
     }
     elseif ($book->get('name') === 'My second Book')
