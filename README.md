@@ -214,6 +214,7 @@ Return the object as a xml string. Can be loaded from `Craur::createFromXml`.
 - 1.5-dev
   - fixed csv file test
   - only add csv values, which are not empty
+  - added method to generate csv rows out of an object
 - 1.4.1 (2012/03/14)
   - added `make test-constant` (watches for file changes with inotifywait on linux
     or wait_on on mac osx ) and runs tests on change

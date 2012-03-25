@@ -1058,18 +1058,50 @@ class Craur
      *          'book',
      *          'book.author'
      *      );
-     *      $expected_row_data = array(
-     *          'My Book',
-     *          '2012',
-     *          'Hans',
-     *          '32'
+     *      $expected_rows_data = array(
+     *          array(
+     *              'My Book',
+     *              '2012',
+     *              'Hans',
+     *              '32'
+     *          )
      *      );
      * 
-     *      assert(json_encode($expected_row_data) === json_encode(Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys)));
+     *      assert(json_encode($expected_rows_data) === json_encode(Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys)));
      * @return array
      */
-    static function extractPathsFromObject(Craur $entry, array $raw_mapping_keys, array $raw_identifier_keys)
+    static function extractPathsFromObject(Craur $entry, array $raw_mapping_keys, array $raw_identifier_keys, $prefix = '')
     {
+        /*
+         * Get rid of the prefix
+         */
+        foreach ($raw_mapping_keys as $pos => $raw_mapping_key)
+        {
+            if (substr($raw_mapping_key, 0, strlen($prefix)) == $prefix)
+            {
+                $raw_mapping_keys[$pos] = substr($raw_mapping_key, strlen($prefix));
+            }
+            else
+            {
+                unset($raw_mapping_keys[$pos]);
+            }
+        }
+        
+        foreach ($raw_identifier_keys as $pos => $raw_identifier_key)
+        {
+            if (substr($raw_identifier_key, 0, strlen($prefix)) == $prefix)
+            {
+                $raw_identifier_keys[$pos] = substr($raw_identifier_key, strlen($prefix));
+            }
+            else
+            {
+                unset($raw_identifier_keys[$pos]);
+            }
+        }
+
+        /*
+         * Do the work
+         */
         $scalar_values = array();
         
         foreach ($raw_mapping_keys as $pos => $raw_mapping_key)
@@ -1094,7 +1126,7 @@ class Craur
                  */
                 continue ;
             }
-            
+
             $sub_raw_mapping_keys = array();
             
             foreach ($raw_mapping_keys as $pos => $raw_mapping_key)
@@ -1105,22 +1137,58 @@ class Craur
                 }
             }
             
+            $sub_raw_identifier_keys = array();
+            
+            foreach ($raw_identifier_keys as $pos => $sub_raw_identifier_key)
+            {
+                if (substr($sub_raw_identifier_key, 0, strlen($raw_identifier_key) + 1) == $raw_identifier_key . '.')
+                {
+                    $sub_raw_identifier_keys[] = substr($sub_raw_identifier_key, strlen($raw_identifier_key) + 1);
+                }
+            }
             
             foreach ($entry->get($raw_identifier_key . '[]') as $sub_entry)
             {
-                $row = array();
-                
-                foreach ($scalar_values as $pos => $scalar_value)
-                {
-                    $row[$pos] = $scalar_value;
-                }
-                
+                $row = $scalar_values;
+ 
                 foreach ($sub_raw_mapping_keys as $pos => $sub_raw_mapping_key)
                 {
-                    $row[$pos] = (string) $sub_entry->get($sub_raw_mapping_key);
+                    if (strpos($sub_raw_mapping_key, '.') === false)
+                    {
+                        $row[$pos] = (string) $sub_entry->get($sub_raw_mapping_key);
+                    }
                 }
                 
-                $rows[] = $row;
+                if (empty($sub_raw_identifier_keys))
+                {
+                    /*
+                     * ok we have no sub identifiers for this identifier
+                     */
+                     
+                    $rows[] = $row;
+                }
+                else
+                {
+                    foreach ($sub_raw_identifier_keys as $sub_raw_identifier_key)
+                    {
+                        foreach ($sub_entry->get($sub_raw_identifier_key . '[]') as $sub_sub_entry)
+                        {
+                            $sub_rows = self::extractPathsFromObject($sub_sub_entry, $raw_mapping_keys, $raw_identifier_keys, $raw_identifier_key . '.' . $sub_raw_identifier_key . '.');
+                            
+                            foreach ($sub_rows as $sub_row_values)
+                            {
+                                $sub_row = $row;
+                                
+                                foreach ($sub_row_values as $pos => $scalar_value)
+                                {
+                                    $sub_row[$pos] = $scalar_value;
+                                }
+        
+                                $rows[] = $sub_row;
+                            }
+                        }
+                    }
+                }
             }
         }
         

@@ -229,7 +229,7 @@ $raw_identifier_keys = array(
     'book',
     'book.author'
 );
-$expected_row_data = array(
+$expected_rows_data = array(
     array(
         'My Book',
         '2012',
@@ -238,5 +238,5 @@ $expected_row_data = array(
     )
 );
 
-assert(json_encode($expected_row_data) === json_encode(Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys)));
+assert(json_encode($expected_rows_data) === json_encode(Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys)));
 
