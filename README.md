@@ -312,7 +312,7 @@ Specify the input format. Default is auto.
 
 ### Output-Format with `--output_format [json|xml|csv]`
 
-Specify the input format.
+Specify the output format.
 
 Example (xml to json)
 
