@@ -209,16 +209,16 @@ assert($cheap_books[1]->get('name') == 'C');
 
 /* Craur#extractPathsFromObject */
 
-$entry = array(
+$entry = new Craur(array(
    'book' => array(
        'name' => 'My Book',
-       'year' => 2012,
+       'year' => '2012',
         'author' => array(
             'name' => 'Hans',
             'age' => '32'
         )
     )
-);
+));
 $raw_mapping_keys = array(
     'book.name',
     'book.year',
@@ -231,10 +231,10 @@ $raw_identifier_keys = array(
 );
 $expected_row_data = array(
     'My Book',
-    2012,
+    '2012',
     'Hans',
     '32'
 );
 
-assert(json_encode($expected_row_data) === json_encode(Craur::extractPathsFromObject(array(), $entry, $raw_mapping_keys, $raw_identifier_keys)));
+assert(json_encode($expected_row_data) === json_encode(Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys)));
 
