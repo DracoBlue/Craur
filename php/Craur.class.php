@@ -1117,10 +1117,6 @@ class Craur
      */
     public function saveToCsvFile($csv_file_path, array $field_mappings)
     {
-        list($raw_mapping_keys, $raw_identifier_keys) = self::getRawMappingAndIdentifiers($field_mappings);
-        
-        $rows = self::extractPathsFromObject($this, $raw_mapping_keys, $raw_identifier_keys);
-        
         /*
          * Clean the file
          */
@@ -1129,12 +1125,24 @@ class Craur
         
         fputcsv($file_handle, $field_mappings, ';');
         
+        $this->writeToCsvFileHandle($file_handle, $field_mappings);
+        
+        fclose($file_handle);
+    }
+    
+    /**
+     * This function can be used to write the csv directly into a file handle
+     * (e.g. STDOUT). It's will be called by `saveToCsvFile`.
+     */
+    public function writeToCsvFileHandle($file_handle, $field_mappings)
+    {
+        list($raw_mapping_keys, $raw_identifier_keys) = self::getRawMappingAndIdentifiers($field_mappings);
+        $rows = self::extractPathsFromObject($this, $raw_mapping_keys, $raw_identifier_keys);
+        
         foreach ($rows as $row)
         {
             fputcsv($file_handle, $row, ';');
         }
-        
-        fclose($file_handle);
     }
 
     /**

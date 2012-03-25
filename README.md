@@ -249,10 +249,51 @@ The csv file will look like this now:
     "My Book";2012;Paul
     "My second Book";2010;Erwin
     
+### 
+
+### Craur#writeToCsvFileHandle(`$file_handle, array $field_mappings`) : `void`
+
+Will write into the given file handle the objects content according to the given
+`$field_mappings`. Use `STDOUT` constant as `$file_handle` if you want to echo the
+csv content. This method is used by `Craur#saveToCsvFile`.
+
+    $data = array(
+        'book' => array(
+            array(
+                'name' => 'My Book',
+                'year' => '2012',
+                'author' => array(
+                    array('name' => 'Hans'),
+                    array('name' => 'Paul')
+                )
+            ),
+            array(
+                'name' => 'My second Book',
+                'year' => '2010',
+                'author' => array(
+                    array('name' => 'Erwin')
+                )
+            )
+        )
+    );
+    
+    $shelf = new Craur($data);
+    $shelf->writeToCsvFileHandle(STDOUT, array(
+        'book[].name',
+        'book[].year',
+        'book[].author[].name',
+    ));
+    
+    // will echo:
+    // "My Book";2012;Hans
+    // "My Book";2012;Paul
+    // "My second Book";2010;Erwin
+
 ## Changelog
 
 - 1.5-dev
   - added `saveToCsvFile($file_path, array $field_mappings)`
+  - added `writeToCsvFileHandle($file_handle, array $field_mappings)`
   - fixed csv file test
   - only add csv values, which are not empty
   - added method to generate csv rows out of an object
