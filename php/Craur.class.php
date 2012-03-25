@@ -1034,4 +1034,100 @@ class Craur
         return implode('', $result_buffer);
     }
 
+    /**
+     * This function is used internally to map a csv row into an object.
+     * 
+     * @example
+     *      $entry = array(
+     *         'book' => array(
+     *             'name' => 'My Book',
+     *             'year' => 2012,
+     *              'author' => array(
+     *                  'name' => 'Hans',
+     *                  'age' => '32'
+     *              )
+     *          )
+     *      );
+     *      $raw_mapping_keys = array(
+     *          'book.name',
+     *          'book.year',
+     *          'book.author.name',
+     *          'book.author.age'
+     *      );
+     *      $raw_identifier_keys = array(
+     *          'book',
+     *          'book.author'
+     *      );
+     *      $expected_row_data = array(
+     *          'My Book',
+     *          2012,
+     *          'Hans',
+     *          '32'
+     *      );
+     * 
+     *      assert(json_encode($expected_row_data) === json_encode(Craur::extractPathsFromObject(array(), $entry, $raw_mapping_keys, $raw_identifier_keys)));
+     * @return array
+     */
+    static function extractPathsFromObject(array $row_data, array $entry, array $raw_mapping_keys, array $raw_identifier_keys)
+    {
+        $entry_sub_entries = array();
+        
+        /*
+         * First of all, extract all direct keys (no . in the name).
+         * 
+         * e.g.: name, age
+         */
+        foreach ($raw_mapping_keys as $pos => $raw_mapping_key)
+        {
+            if (strpos($raw_mapping_key, '.') === false)
+            {
+                /*
+                 * Something like: name
+                 */
+                $row_data[$pos] = $entry[$raw_mapping_key];
+            }
+        }
+        
+        
+        /*
+         * Now retrieve all data which is stored within an element (e.g. the name in author.name)
+         */
+        foreach ($raw_identifier_keys as $raw_identifier_key)
+        {
+            if (strpos($raw_identifier_key, '.') !== false)
+            {
+                /*
+                 * We have a key like book.author.name, will be handled after recursion!
+                 */
+                continue ;
+            }
+            $sub_raw_identifier_keys = array();
+            $sub_raw_mapping_keys = array();
+            $sub_raw_data = array();
+            foreach ($raw_mapping_keys as $pos => $raw_mapping_key)
+            {
+                if (substr($raw_mapping_key, 0, strlen($raw_identifier_key) + 1) == $raw_identifier_key . '.')
+                {
+                    $sub_raw_mapping_keys[$pos] = substr($raw_mapping_key, strlen($raw_identifier_key) + 1);
+                    // $row_data[$pos] = $sub_raw_data;
+                }
+            }
+            foreach ($raw_identifier_keys as $sub_raw_identifier_key)
+            {
+                if (substr($sub_raw_identifier_key, 0, strlen($raw_identifier_key) + 1) == $raw_identifier_key . '.')
+                {
+                    $sub_raw_identifier_keys[] = substr($sub_raw_identifier_key, strlen($raw_identifier_key) + 1);
+                }
+            }
+            
+            if (empty($sub_raw_mapping_keys))
+            {
+                continue ;
+            }
+            
+            $row_data = self::extractPathsFromObject($row_data, $entry[$raw_identifier_key], $sub_raw_mapping_keys, $sub_raw_identifier_keys);
+        }
+                
+        return $row_data;
+    }    
 }
