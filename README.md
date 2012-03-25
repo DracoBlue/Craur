@@ -306,11 +306,11 @@ Example (xml to csv, with field mapping - see `--output_format` for more details
     alternate;http://example.org/
     self;http://example.org/feed.atom
 
-### `--input_format [json|xml|csv|auto]`
+### Input-Format with `--input_format [json|xml|csv|auto]`
 
 Specify the input format. Default is auto.
 
-### `--output_format [json|xml|csv]`
+### Output-Format with `--output_format [json|xml|csv]`
 
 Specify the input format.
 
