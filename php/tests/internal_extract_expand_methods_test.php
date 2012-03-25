@@ -16,10 +16,6 @@ $expected_row_data = array(
 );
 
 $results_row_data = Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
-echo "expected: ";
-echo json_encode($expected_row_data) . PHP_EOL;
-echo "given: ";
-echo json_encode($results_row_data) . PHP_EOL;
 
 assert(json_encode(array($expected_row_data)) == json_encode($results_row_data));
 
@@ -48,10 +44,6 @@ $expected_row_data = array(
 );
 
 $results_row_data = Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
-echo "expected: ";
-echo json_encode($expected_row_data) . PHP_EOL;
-echo "given: ";
-echo json_encode($results_row_data) . PHP_EOL;
 
 assert(json_encode(array($expected_row_data)) == json_encode($results_row_data));
 
@@ -81,10 +73,6 @@ $expected_row_data = array(
 );
 
 $results_row_data = Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
-echo "expected: ";
-echo json_encode($expected_row_data) . PHP_EOL;
-echo "given: ";
-echo json_encode($results_row_data) . PHP_EOL;
 
 assert(json_encode(array($expected_row_data)) == json_encode($results_row_data));
 
@@ -118,10 +106,6 @@ $expected_row_data = array(
 );
 
 $results_row_data = Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
-echo "expected: ";
-echo json_encode($expected_row_data) . PHP_EOL;
-echo "given: ";
-echo json_encode($results_row_data) . PHP_EOL;
 
 assert(json_encode(array($expected_row_data)) == json_encode($results_row_data));
 
@@ -175,10 +159,6 @@ $expected_rows_data = array(
 );
 
 $results_row_data = Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
-echo "expected: ";
-echo json_encode($expected_rows_data) . PHP_EOL;
-echo "given: ";
-echo json_encode($results_row_data) . PHP_EOL;
 
 assert(json_encode($expected_rows_data) == json_encode($results_row_data));
 
@@ -242,10 +222,6 @@ $expected_rows_data = array(
 );
 
 $results_row_data = Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
-echo "expected: ";
-echo json_encode($expected_rows_data) . PHP_EOL;
-echo "given: ";
-echo json_encode($results_row_data) . PHP_EOL;
 
 assert(json_encode($expected_rows_data) == json_encode($results_row_data));
 
