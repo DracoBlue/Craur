@@ -368,12 +368,18 @@ class Craur
             {
                 foreach ($object_keys as $object_key)
                 {
-                    $result_entry[$object_key][] = $entry[$object_key];                        
+                    if (isset($entry[$object_key]))
+                    {
+                        $result_entry[$object_key][] = $entry[$object_key];                        
+                    }
                 }
             }
             foreach ($object_keys as $object_key)
             {
-                $result_entry[$object_key] = self::mergePathEntriesRecursive($result_entry[$object_key]);                        
+                if (isset($result_entry[$object_key]))
+                {
+                    $result_entry[$object_key] = self::mergePathEntriesRecursive($result_entry[$object_key]);                        
+                }
             }
             $result_entries[] = $result_entry;
         }
@@ -467,6 +473,7 @@ class Craur
             $sub_raw_identifier_keys = array();
             $sub_raw_mapping_keys = array();
             $sub_raw_data = array();
+            $sub_pos = 0;
             foreach ($raw_mapping_keys as $pos => $raw_mapping_key)
             {
                 if (array_key_exists($pos, $row_data))
@@ -474,7 +481,11 @@ class Craur
                     if (substr($raw_mapping_key, 0, strlen($raw_identifier_key) + 1) == $raw_identifier_key . '.')
                     {
                         $sub_raw_mapping_keys[] = substr($raw_mapping_key, strlen($raw_identifier_key) + 1);
-                        $sub_raw_data[] = $row_data[$pos];
+                        if (strlen($row_data[$pos]) > 0)
+                        {
+                            $sub_raw_data[$sub_pos] = $row_data[$pos];
+                        }
+                        $sub_pos++;
                     }
                 }
             }
