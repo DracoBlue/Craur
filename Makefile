@@ -8,12 +8,11 @@ help:
 
 test:
 
-	@./run_tests.sh
+	@cd php && libs/naith/naith run
 
 test-constant:
 
-	@echo "Waiting for files to change ..."
-	@while [ 1 ]; do if [ `which wait_on` ]; then wait_on -w . ; else inotifywait --quiet -r -e close_write .; fi; make test; sleep 1; done
+	@cd php && libs/naith/naith run-constant
 	
 .PHONY: test help
 

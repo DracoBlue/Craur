@@ -256,6 +256,7 @@ The csv file will look like this now:
   - fixed csv file test
   - only add csv values, which are not empty
   - added method to generate csv rows out of an object
+  - bundled naith as testing framework (<https://github.com/DracoBlue/naith>)
 - 1.4.1 (2012/03/14)
   - added `make test-constant` (watches for file changes with inotifywait on linux
     or wait_on on mac osx ) and runs tests on change
