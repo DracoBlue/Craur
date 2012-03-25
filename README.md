@@ -289,9 +289,49 @@ csv content. This method is used by `Craur#saveToCsvFile`.
     // "My Book";2012;Paul
     // "My second Book";2010;Erwin
 
+## Cli
+
+As of 1.5.0 you can use craur on the commandline, too. Just pipe any content
+into the craur-binary and you can get the content as json, xml or csv.
+
+Example (xml to json):
+
+    $ cat php/tests/fixtures/example_atom_feed.xml | php/craur --output_format json
+
+Example (xml to csv, with field mapping - see `--output_format` for more details)
+
+    $ cat php/tests/fixtures/example_atom_feed.xml | php/craur --output_format csv feed.link[].@rel feed.link[].@href
+    // output:
+    alternate;http://example.org/
+    self;http://example.org/feed.atom
+
+### `--input_format [json|xml|csv|auto]`
+
+Specify the input format. Default is auto.
+
+### `--output_format [json|xml|csv]`
+
+Specify the input format.
+
+Example (xml to json)
+
+    $ cat php/tests/fixtures/example_atom_feed.xml | php/craur --output_format json
+    // output:
+    // ... lots of json ...
+
+If you specify the output_format as `csv`, you have to give the field mappings
+as parameter. To get all rel-attributes and href-attributes of the feed's link
+element, you can do this:
+
+    $ cat php/tests/fixtures/example_atom_feed.xml | php/craur --output_format csv feed.link[].@rel feed.link[].@href
+    // output:
+    alternate;http://example.org/
+    self;http://example.org/feed.atom
+
 ## Changelog
 
 - 1.5-dev
+  - added cli for craur
   - added `saveToCsvFile($file_path, array $field_mappings)`
   - added `writeToCsvFileHandle($file_handle, array $field_mappings)`
   - fixed csv file test

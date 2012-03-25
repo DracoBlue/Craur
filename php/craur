@@ -1,0 +1,146 @@
+#!/usr/bin/env php
+<?php
+
+require_once ('Craur.class.php');
+
+$arguments = array_slice($argv, 1);
+
+class CraurCli
+{
+    protected $options = array(
+        'input_format' => 'auto',
+        'output_format' => 'csv'
+    );
+    
+    protected $field_mappings = array();
+    
+    /**
+     * @var Craur
+     */
+    protected $root = null;
+    
+    function __construct($arguments, $input_string)
+    {
+        list($options, $this->field_mappings) = $this->getOptionsAndParametersFromArguments($arguments, $this->options);
+  
+        list($this->options['input_format']) = $options['input_format'];
+        list($this->options['output_format']) = $options['output_format'];
+        
+        $this->root = $this->getCraurFromInputString($input_string);
+    }
+    
+    protected function getCraurFromInputString($input_string)
+    {
+        $input_format = $this->options['input_format'];
+        if ($input_format == 'auto')
+        {
+            $trimmed_input_string = trim($input_string);
+            $first_char = substr($trimmed_input_string, 0, 1);
+            $last_char = substr($trimmed_input_string, -1, 1);
+            if ($first_char == '{' && $last_char == '}')
+            {
+                $input_format = 'json';
+            }
+            elseif ($first_char == '[' && $last_char == ']')
+            {
+                $input_format = 'json';
+            }
+            elseif ($first_char == '<' && $last_char == '>')
+            {
+                $input_format = 'xml';
+            }
+            else
+            {
+                throw new Exception('Cannot guess the input format, please use "--input_format csv" to specific the input format');
+            }
+        }
+        
+        if ($input_format === 'json')
+        {
+            return Craur::createFromJson($input_string);
+        }
+        
+        if ($input_format === 'xml')
+        {
+            return Craur::createFromXml($input_string);
+        }
+        
+        throw new Exception('Cannot read this input format, please specify json, xml or auto.');
+    }
+    
+    public function printResults()
+    {
+        $current_frontier = array($this->root);
+        
+        $output_format = $this->options['output_format'];
+        
+        if ($output_format === 'json')
+        {
+            echo $this->root->toJsonString();
+        }
+        elseif ($output_format === 'xml')
+        {
+            echo $this->root->toXmlString();
+        }
+        elseif ($output_format === 'csv')
+        {
+            $this->root->writeToCsvFileHandle(STDOUT, $this->field_mappings);
+        }
+    }
+    
+    protected function getOptionsAndParametersFromArguments($arguments, array $default_options = array())
+    {
+        $parameters = array();
+        $options = array();
+        
+        $next_value_key = null;
+        foreach ($arguments as $argument)
+        {
+            if (substr($argument, 0, 2) == '--')
+            {
+                $next_value_key = substr($argument, 2);
+            }
+            else
+            {
+                if ($next_value_key !== null)
+                {
+                    if (!array_key_exists($next_value_key, $options))
+                    {
+                        $options[$next_value_key] = array();
+                    }
+                    if (substr($argument, 0, 1) == '"' && substr($argument, -1, 1) == '"')
+                    {
+                        /*
+                         * It's something like "example" (with quotes)
+                         */
+                        $argument = substr($argument, 1, strlen($argument) - 2);
+                    }
+                    $options[$next_value_key][] = $argument;
+                    $next_value_key = null;
+                }
+                else
+                {
+                    $parameters[] = $argument;
+                }
+            }
+        }
+        
+        foreach ($default_options as $key => $value)
+        {
+            if (!array_key_exists($key, $options))
+            {
+                $options[$key] = array($value);
+            }
+        }
+        
+        return array($options, $parameters);
+    }
+}
+
+$input_string = '';
+while ($input_string_part = fgets(STDIN)) {
+    $input_string .= $input_string_part;
+}
+$cli = new CraurCli($arguments, $input_string);
+$cli->printResults();
+
