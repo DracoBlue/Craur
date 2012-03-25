@@ -207,6 +207,50 @@ assert($cheap_books[0]->get('name') == 'B');
 assert($cheap_books[1]->get('name') == 'C');
 
 
+/* Craur#saveToCsvFile */
+
+$data = array(
+    'book' => array(
+        array(
+            'name' => 'My Book',
+            'year' => '2012',
+            'author' => array(
+                array('name' => 'Hans'),
+                array('name' => 'Paul')
+            )
+        ),
+        array(
+            'name' => 'My second Book',
+            'year' => '2010',
+            'author' => array(
+                array('name' => 'Erwin')
+            )
+        )
+    )
+);
+
+$shelf = new Craur($data);
+$shelf->saveToCsvFile('fixtures/temp_csv_file.csv', array(
+    'book[].name',
+    'book[].year',
+    'book[].author[].name',
+));
+
+// csv file will look like this now:
+// book[].name;book[].year;book[].author[].name
+// "My Book";2012;Hans
+// "My Book";2012;Paul
+// "My second Book";2010;Erwin
+
+assert(json_encode(array($data)) == Craur::createFromCsvFile('fixtures/temp_csv_file.csv', array(
+    'book[].name',
+    'book[].year',
+    'book[].author[].name',
+))->toJsonString());
+
+unlink('fixtures/temp_csv_file.csv');
+
+
 /* Craur#extractPathsFromObject */
 
 $entry = new Craur(array(

@@ -209,9 +209,50 @@ Return the object as a json string. Can be loaded from `Craur::createFromJson`.
 
 Return the object as a xml string. Can be loaded from `Craur::createFromXml`.
 
+### Craur#saveToCsvFile(`$file_path, array $field_mappings`) : `void`
+
+Will store the csv file with the objects content according to the given
+`$field_mappings`. The file can be loaded with `Craur::loadFromCsvFile` and
+the same `$field_mappings`.
+
+    $data = array(
+        'book' => array(
+            array(
+                'name' => 'My Book',
+                'year' => '2012',
+                'author' => array(
+                    array('name' => 'Hans'),
+                    array('name' => 'Paul')
+                )
+            ),
+            array(
+                'name' => 'My second Book',
+                'year' => '2010',
+                'author' => array(
+                    array('name' => 'Erwin')
+                )
+            )
+        )
+    );
+    
+    $shelf = new Craur($data);
+    $shelf->saveToCsvFile('fixtures/temp_csv_file.csv', array(
+        'book[].name',
+        'book[].year',
+        'book[].author[].name',
+    ));
+    
+The csv file will look like this now:
+
+    book[].name;book[].year;book[].author[].name
+    "My Book";2012;Hans
+    "My Book";2012;Paul
+    "My second Book";2010;Erwin
+    
 ## Changelog
 
 - 1.5-dev
+  - added `saveToCsvFile($file_path, array $field_mappings)`
   - fixed csv file test
   - only add csv values, which are not empty
   - added method to generate csv rows out of an object

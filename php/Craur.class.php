@@ -176,6 +176,33 @@ class Craur
         
         $current_entry = array();
         
+        list($raw_mapping_keys, $raw_identifier_keys) = self::getRawMappingAndIdentifiers($field_mappings);
+
+        $entries = array();
+        
+        while (($row_data = fgetcsv($file_handle, 23085, ";")) !== FALSE)
+        {
+            $row_number++;
+            if ($row_number != 1)
+            {
+                $entries[] = self::expandPathsIntoArray($row_data, $raw_mapping_keys, $raw_identifier_keys);
+            }
+        }
+        
+        fclose($file_handle);
+        
+        $merged_entries = self::mergePathEntriesRecursive($entries);
+        
+        return new Craur($merged_entries);   
+    }
+
+    /**
+     * Generates the raw mapping and raw identifiers for a given set of field mappings.
+     * 
+     * @private
+     */
+    static function getRawMappingAndIdentifiers(array $field_mappings)
+    {
         $raw_mapping_keys = array();
         $raw_identifier_keys = array();
         
@@ -204,28 +231,13 @@ class Craur
         /*
          * $raw_mapping_keys is now: array('book.name', 'book.year', 'book.author.name', 'book.author.age')
          */
-        
+
         $raw_identifier_keys = array_values($raw_identifier_keys);
         /*
          * $raw_identifier_keys is now just: array('book', 'book.author')
          */
         
-        $entries = array();
-        
-        while (($row_data = fgetcsv($file_handle, 23085, ";")) !== FALSE)
-        {
-            $row_number++;
-            if ($row_number != 1)
-            {
-                $entries[] = self::expandPathsIntoArray($row_data, $raw_mapping_keys, $raw_identifier_keys);
-            }
-        }
-        
-        fclose($file_handle);
-        
-        $merged_entries = self::mergePathEntriesRecursive($entries);
-        
-        return new Craur($merged_entries);   
+        return array($raw_mapping_keys, $raw_identifier_keys);
     }
 
     /**
@@ -1032,6 +1044,75 @@ class Craur
         }
 
         return implode('', $result_buffer);
+    }
+
+    /**
+     * Will store the csv file with the objects content according to the given `$field_mappings`.
+     * 
+     * @example
+     *     $data = array(
+     *         'book' => array(
+     *             array(
+     *                 'name' => 'My Book',
+     *                 'year' => '2012',
+     *                 'author' => array(
+     *                     array('name' => 'Hans'),
+     *                     array('name' => 'Paul')
+     *                 )
+     *             ),
+     *             array(
+     *                 'name' => 'My second Book',
+     *                 'year' => '2010',
+     *                 'author' => array(
+     *                     array('name' => 'Erwin')
+     *                 )
+     *             )
+     *         )
+     *     );
+     * 
+     *     $shelf = new Craur($data);
+     *     $shelf->saveToCsvFile('fixtures/temp_csv_file.csv', array(
+     *         'book[].name',
+     *         'book[].year',
+     *         'book[].author[].name',
+     *     ));
+     * 
+     *     // csv file will look like this now:
+     *     // book[].name;book[].year;book[].author[].name
+     *     // "My Book";2012;Hans
+     *     // "My Book";2012;Paul
+     *     // "My second Book";2010;Erwin
+     * 
+     *     assert(json_encode(array($data)) == Craur::createFromCsvFile('fixtures/temp_csv_file.csv', array(
+     *         'book[].name',
+     *         'book[].year',
+     *         'book[].author[].name',
+     *     ))->toJsonString());
+     * 
+     *     unlink('fixtures/temp_csv_file.csv');
+     * 
+     * @return void
+     */
+    public function saveToCsvFile($csv_file_path, array $field_mappings)
+    {
+        list($raw_mapping_keys, $raw_identifier_keys) = self::getRawMappingAndIdentifiers($field_mappings);
+        
+        $rows = self::extractPathsFromObject($this, $raw_mapping_keys, $raw_identifier_keys);
+        
+        /*
+         * Clean the file
+         */
+        file_put_contents($csv_file_path, '');
+        $file_handle = fopen($csv_file_path, 'w');
+        
+        fputcsv($file_handle, $field_mappings, ';');
+        
+        foreach ($rows as $row)
+        {
+            fputcsv($file_handle, $row, ';');
+        }
+        
+        fclose($file_handle);
     }
 
     /**
