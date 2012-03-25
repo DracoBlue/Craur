@@ -1129,6 +1129,6 @@ class Craur
             $rows[] = $scalar_values;
         }
         
-        return $rows[0];
+        return $rows;
     }    
 }

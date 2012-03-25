@@ -15,13 +15,13 @@ $expected_row_data = array(
     '2012'
 );
 
-$result_row_data = Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
+$results_row_data = Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
 echo "expected: ";
 echo json_encode($expected_row_data) . PHP_EOL;
 echo "given: ";
-echo json_encode($result_row_data) . PHP_EOL;
+echo json_encode($results_row_data) . PHP_EOL;
 
-assert(json_encode($expected_row_data) == json_encode($result_row_data));
+assert(json_encode(array($expected_row_data)) == json_encode($results_row_data));
 
 $entry = new Craur(array(
     'name' => 'My Book',
@@ -47,13 +47,13 @@ $expected_row_data = array(
     '32'
 );
 
-$result_row_data = Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
+$results_row_data = Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
 echo "expected: ";
 echo json_encode($expected_row_data) . PHP_EOL;
 echo "given: ";
-echo json_encode($result_row_data) . PHP_EOL;
+echo json_encode($results_row_data) . PHP_EOL;
 
-assert(json_encode($expected_row_data) == json_encode($result_row_data));
+assert(json_encode(array($expected_row_data)) == json_encode($results_row_data));
 
 
 $entry = new Craur(array(
@@ -80,13 +80,13 @@ $expected_row_data = array(
     '32'
 );
 
-$result_row_data = Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
+$results_row_data = Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
 echo "expected: ";
 echo json_encode($expected_row_data) . PHP_EOL;
 echo "given: ";
-echo json_encode($result_row_data) . PHP_EOL;
+echo json_encode($results_row_data) . PHP_EOL;
 
-assert(json_encode($expected_row_data) == json_encode($result_row_data));
+assert(json_encode(array($expected_row_data)) == json_encode($results_row_data));
 
 
 
@@ -117,11 +117,11 @@ $expected_row_data = array(
     '32'
 );
 
-$result_row_data = Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
+$results_row_data = Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
 echo "expected: ";
 echo json_encode($expected_row_data) . PHP_EOL;
 echo "given: ";
-echo json_encode($result_row_data) . PHP_EOL;
+echo json_encode($results_row_data) . PHP_EOL;
 
-assert(json_encode($expected_row_data) == json_encode($result_row_data));
+assert(json_encode(array($expected_row_data)) == json_encode($results_row_data));
 
