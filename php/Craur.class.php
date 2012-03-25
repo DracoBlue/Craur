@@ -1250,11 +1250,18 @@ class Craur
             
             $sub_raw_identifier_keys = array();
             
-            foreach ($raw_identifier_keys as $pos => $sub_raw_identifier_key)
+            foreach ($raw_identifier_keys as $pos => $possible_sub_raw_identifier_key)
             {
-                if (substr($sub_raw_identifier_key, 0, strlen($raw_identifier_key) + 1) == $raw_identifier_key . '.')
+                if (substr($possible_sub_raw_identifier_key, 0, strlen($raw_identifier_key) + 1) == $raw_identifier_key . '.')
                 {
-                    $sub_raw_identifier_keys[] = substr($sub_raw_identifier_key, strlen($raw_identifier_key) + 1);
+                    $sub_raw_identifier_key =  substr($possible_sub_raw_identifier_key, strlen($raw_identifier_key) + 1);
+                    /*
+                     * Only children, not grand children
+                     */
+                    if (strpos($sub_raw_identifier_key, '.') === false)
+                    {
+                        $sub_raw_identifier_keys[] = $sub_raw_identifier_key;
+                    }
                 }
             }
             
