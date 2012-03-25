@@ -232,11 +232,33 @@ class Craur
          * $raw_mapping_keys is now: array('book.name', 'book.year', 'book.author.name', 'book.author.age')
          */
 
-        $raw_identifier_keys = array_values($raw_identifier_keys);
+        $raw_identifier_keys_with_holes = array_values($raw_identifier_keys);
+        
         /*
-         * $raw_identifier_keys is now just: array('book', 'book.author')
+         * $raw_identifier_keys_with_holes is now just: array('book', 'book.city.place')
          */
         
+        /*
+         * Sometimes we are missing a subkey (like book.city, thus we need to be sure
+         * we have them all)
+         */
+        $raw_identifier_keys = array();
+        foreach ($raw_identifier_keys_with_holes as $raw_identifier_key)
+        {
+            $current_path = array();
+            foreach (explode('.', $raw_identifier_key) as $key_part)
+            {
+                $current_path[] = $key_part;
+                $raw_identifier_keys[] = implode('.', $current_path);
+            }
+        }
+        
+        $raw_identifier_keys = array_unique($raw_identifier_keys);
+        
+        /*
+         * $raw_identifier_keys is now just: array('book', 'book.city', 'book.city.place')
+         */
+
         return array($raw_mapping_keys, $raw_identifier_keys);
     }
 
