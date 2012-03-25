@@ -1070,23 +1070,65 @@ class Craur
      */
     static function extractPathsFromObject(Craur $entry, array $raw_mapping_keys, array $raw_identifier_keys)
     {
+        $scalar_values = array();
+        
         foreach ($raw_mapping_keys as $pos => $raw_mapping_key)
         {
-            if (strpos($raw_mapping_key, '[]') === false)
+            if (strpos($raw_mapping_key, '.') === false)
             {
                 /*
-                 * Something like: name or author.name
+                 * Something like: name or age
                  */
-                $row_data[$pos] = (string) $entry->get($raw_mapping_key);
-            }
-            else
-            {
-                /*
-                 * Something like: author[].name
-                 */
+                $scalar_values[$pos] = (string) $entry->get($raw_mapping_key);
             }
         }
         
-        return $row_data;
+        $rows = array();
+        
+        foreach ($raw_identifier_keys as $raw_identifier_key)
+        {
+            if (strpos($raw_identifier_key, '.') !== false)
+            {
+                /*
+                 * We have a key like book.author, will be handled after recursion!
+                 */
+                continue ;
+            }
+            
+            $sub_raw_mapping_keys = array();
+            
+            foreach ($raw_mapping_keys as $pos => $raw_mapping_key)
+            {
+                if (substr($raw_mapping_key, 0, strlen($raw_identifier_key) + 1) == $raw_identifier_key . '.')
+                {
+                    $sub_raw_mapping_keys[$pos] = substr($raw_mapping_key, strlen($raw_identifier_key) + 1);
+                }
+            }
+            
+            
+            foreach ($entry->get($raw_identifier_key . '[]') as $sub_entry)
+            {
+                $row = array();
+                
+                foreach ($scalar_values as $pos => $scalar_value)
+                {
+                    $row[$pos] = $scalar_value;
+                }
+                
+                foreach ($sub_raw_mapping_keys as $pos => $sub_raw_mapping_key)
+                {
+                    $row[$pos] = (string) $sub_entry->get($sub_raw_mapping_key);
+                }
+                
+                $rows[] = $row;
+            }
+        }
+        
+        if (empty($rows))
+        {
+            $rows[] = $scalar_values;
+        }
+        
+        return $rows[0];
     }    
 }
