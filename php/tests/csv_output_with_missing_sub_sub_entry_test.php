@@ -19,6 +19,6 @@ $expected_lines = array(
     '"Atom draft-07 snapshot";enclosure;;http://example.org/audio/ph34r_my_podcast.mp3'
 );
 
-assert(count(array_diff($lines, $expected_lines)) === 0);
+assert(count(array_diff($expected_lines, $lines)) === 0);
 
 

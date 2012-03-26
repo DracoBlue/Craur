@@ -17,6 +17,6 @@ $expected_lines = array(
     '"Atom draft-07 snapshot";enclosure'
 );
 
-assert(count(array_diff($lines, $expected_lines)) === 0);
+assert(count(array_diff($expected_lines, $lines)) === 0);
 
 
