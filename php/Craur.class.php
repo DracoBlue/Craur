@@ -172,6 +172,20 @@ class Craur
             throw new Exception('Cannot open file at ' . $file_path);
         }
         
+        $craur = self::createFromCsvFileHandle($file_handle, $field_mappings);
+        
+        fclose($file_handle);
+        
+        return $craur;   
+    }
+
+    /**
+     * Internal method to create a craur object from a given file handle (e.g. STDIN)
+     * 
+     * @private
+     */
+    static function createFromCsvFileHandle($file_handle, array $field_mappings)
+    {
         $row_number = 0;
         
         $current_entry = array();
@@ -189,13 +203,11 @@ class Craur
             }
         }
         
-        fclose($file_handle);
-        
         $merged_entries = self::mergePathEntriesRecursive($entries);
         
         return new Craur($merged_entries);   
     }
-
+    
     /**
      * Generates the raw mapping and raw identifiers for a given set of field mappings.
      * 

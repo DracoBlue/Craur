@@ -65,6 +65,25 @@ class CraurCli
             return Craur::createFromXml($input_string);
         }
         
+        if ($input_format === 'csv')
+        {
+            $file_handle = tmpfile();
+            fwrite($file_handle, $input_string);
+            fseek($file_handle, 0, SEEK_SET);
+            
+            try
+            {
+                $craur = Craur::createFromCsvFileHandle($file_handle, $this->field_mappings);
+                fclose($file_handle);
+                return $craur;
+            }
+            catch (Exception $exception)
+            {
+                fclose($file_handle);
+                throw $exception;
+            }
+        }
+        
         throw new Exception('Cannot read this input format, please specify json, xml or auto.');
     }
     
