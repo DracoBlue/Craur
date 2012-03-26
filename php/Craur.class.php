@@ -1262,6 +1262,10 @@ class Craur
                 {
                     $sub_raw_mapping_keys[$pos] = substr($raw_mapping_key, strlen($raw_identifier_key) + 1);
                 }
+                elseif ($raw_mapping_key == $raw_identifier_key)
+                {
+                    $sub_raw_mapping_keys[$pos] = '';
+                }
             }
             
             $sub_raw_identifier_keys = array();
@@ -1289,7 +1293,14 @@ class Craur
                 {
                     if (strpos($sub_raw_mapping_key, '.') === false)
                     {
-                        $row[$pos] = (string) $sub_entry->get($sub_raw_mapping_key, '');
+                        if ($sub_raw_mapping_key == '')
+                        {
+                            $row[$pos] = (string) $sub_entry;
+                        }
+                        else
+                        {
+                            $row[$pos] = (string) $sub_entry->get($sub_raw_mapping_key, '');
+                        }
                     }
                 }
                 
