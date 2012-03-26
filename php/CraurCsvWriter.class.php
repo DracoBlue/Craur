@@ -5,12 +5,16 @@ class CraurCsvWriter {
     /**
      * @var Craur
      */
-    protected $root;
+    protected $root = null;
+    protected $field_mappings = array();
+    protected $raw_mapping_keys = array();
+    protected $raw_identifier_keys = array();
     
     public function __construct(Craur $root, array $field_mappings)
     {
         $this->root = $root;
         $this->field_mappings = $field_mappings;
+        list($this->raw_mapping_keys, $this->raw_identifier_keys) = Craur::getRawMappingAndIdentifiers($this->field_mappings);
     }
     
    /**
@@ -19,8 +23,7 @@ class CraurCsvWriter {
      */
     public function writeToCsvFileHandle($file_handle)
     {
-        list($raw_mapping_keys, $raw_identifier_keys) = Craur::getRawMappingAndIdentifiers($this->field_mappings);
-        $rows = self::extractPathsFromObject($this->root, $raw_mapping_keys, $raw_identifier_keys);
+        $rows = self::extractPathsFromObject($this->root, $this->raw_mapping_keys, $this->raw_identifier_keys);
         
         /*
          * We will have to fill up all empty cols with empty strings,
