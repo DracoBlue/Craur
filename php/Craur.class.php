@@ -1139,8 +1139,24 @@ class Craur
         list($raw_mapping_keys, $raw_identifier_keys) = self::getRawMappingAndIdentifiers($field_mappings);
         $rows = self::extractPathsFromObject($this, $raw_mapping_keys, $raw_identifier_keys);
         
+        /*
+         * We will have to fill up all empty cols with empty strings,
+         * otherwise the fputcsv would completely leave the value
+         * for that col and the entire indention in the csv is broken!
+         */
+        $empty_row = array_fill(0, count($field_mappings), '');
+        
         foreach ($rows as $row)
         {
+            /*
+             * Merge, but preserve keys!
+             */
+            $row = $row + $empty_row;
+            /*
+             * We have to ksort now, because the + operator does not
+             * fix the order in numeric arrays :(
+             */
+            ksort($row);
             fputcsv($file_handle, $row, ';');
         }
     }
@@ -1222,7 +1238,7 @@ class Craur
                 /*
                  * Something like: name or age
                  */
-                $scalar_values[$pos] = (string) $entry->get($raw_mapping_key);
+                $scalar_values[$pos] = (string) $entry->get($raw_mapping_key, '');
             }
         }
         
@@ -1265,7 +1281,7 @@ class Craur
                 }
             }
             
-            foreach ($entry->get($raw_identifier_key . '[]') as $sub_entry)
+            foreach ($entry->get($raw_identifier_key . '[]', array()) as $sub_entry)
             {
                 $row = $scalar_values;
  
@@ -1273,39 +1289,38 @@ class Craur
                 {
                     if (strpos($sub_raw_mapping_key, '.') === false)
                     {
-                        $row[$pos] = (string) $sub_entry->get($sub_raw_mapping_key);
+                        $row[$pos] = (string) $sub_entry->get($sub_raw_mapping_key, '');
                     }
                 }
                 
-                if (empty($sub_raw_identifier_keys))
+                $sub_sub_entries_count = 0;
+                foreach ($sub_raw_identifier_keys as $sub_raw_identifier_key)
                 {
-                    /*
-                     * ok we have no sub identifiers for this identifier
-                     */
-                     
-                    $rows[] = $row;
-                }
-                else
-                {
-                    foreach ($sub_raw_identifier_keys as $sub_raw_identifier_key)
+                    foreach ($sub_entry->get($sub_raw_identifier_key . '[]', array()) as $sub_sub_entry)
                     {
-                        foreach ($sub_entry->get($sub_raw_identifier_key . '[]') as $sub_sub_entry)
+                        $sub_rows = self::extractPathsFromObject($sub_sub_entry, $raw_mapping_keys, $raw_identifier_keys, $raw_identifier_key . '.' . $sub_raw_identifier_key . '.');
+                        
+                        foreach ($sub_rows as $sub_row_values)
                         {
-                            $sub_rows = self::extractPathsFromObject($sub_sub_entry, $raw_mapping_keys, $raw_identifier_keys, $raw_identifier_key . '.' . $sub_raw_identifier_key . '.');
+                            $sub_sub_entries_count++;
+                            $sub_row = $row;
                             
-                            foreach ($sub_rows as $sub_row_values)
+                            foreach ($sub_row_values as $pos => $scalar_value)
                             {
-                                $sub_row = $row;
-                                
-                                foreach ($sub_row_values as $pos => $scalar_value)
-                                {
-                                    $sub_row[$pos] = $scalar_value;
-                                }
-        
-                                $rows[] = $sub_row;
+                                $sub_row[$pos] = $scalar_value;
                             }
+    
+                            $rows[] = $sub_row;
                         }
                     }
+                }
+                
+                if (!$sub_sub_entries_count)
+                {
+                    /*
+                     * ok we had no (successful) sub identifiers for this identifier
+                     */
+                    $rows[] = $row;
                 }
             }
         }
