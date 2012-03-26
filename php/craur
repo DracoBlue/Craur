@@ -2,6 +2,7 @@
 <?php
 
 require_once ('Craur.class.php');
+require_once ('CraurCsvWriter.class.php');
 
 $arguments = array_slice($argv, 1);
 
@@ -103,7 +104,8 @@ class CraurCli
         }
         elseif ($output_format === 'csv')
         {
-            $this->root->writeToCsvFileHandle(STDOUT, $this->field_mappings);
+            $writer = new CraurCsvWriter($this->root, $this->field_mappings);
+            $writer->writeToCsvFileHandle(STDOUT);
         }
     }
     

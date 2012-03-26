@@ -15,7 +15,7 @@ $expected_row_data = array(
     '2012'
 );
 
-$results_row_data = Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
+$results_row_data = CraurCsvWriter::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
 
 assert(json_encode(array($expected_row_data)) == json_encode($results_row_data));
 
@@ -43,7 +43,7 @@ $expected_row_data = array(
     '32'
 );
 
-$results_row_data = Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
+$results_row_data = CraurCsvWriter::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
 
 assert(json_encode(array($expected_row_data)) == json_encode($results_row_data));
 
@@ -72,7 +72,7 @@ $expected_row_data = array(
     '32'
 );
 
-$results_row_data = Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
+$results_row_data = CraurCsvWriter::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
 
 assert(json_encode(array($expected_row_data)) == json_encode($results_row_data));
 
@@ -105,7 +105,7 @@ $expected_row_data = array(
     '32'
 );
 
-$results_row_data = Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
+$results_row_data = CraurCsvWriter::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
 
 assert(json_encode(array($expected_row_data)) == json_encode($results_row_data));
 
@@ -158,7 +158,7 @@ $expected_rows_data = array(
     )
 );
 
-$results_row_data = Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
+$results_row_data = CraurCsvWriter::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
 
 assert(json_encode($expected_rows_data) == json_encode($results_row_data));
 
@@ -221,7 +221,7 @@ $expected_rows_data = array(
     )
 );
 
-$results_row_data = Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
+$results_row_data = CraurCsvWriter::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys);
 
 assert(json_encode($expected_rows_data) == json_encode($results_row_data));
 

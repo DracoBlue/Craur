@@ -251,7 +251,7 @@ assert(json_encode(array($data)) == Craur::createFromCsvFile('fixtures/temp_csv_
 unlink('fixtures/temp_csv_file.csv');
 
 
-/* Craur#extractPathsFromObject */
+/* CraurCsvWriter#extractPathsFromObject */
 
 $entry = new Craur(array(
    'book' => array(
@@ -282,5 +282,5 @@ $expected_rows_data = array(
     )
 );
 
-assert(json_encode($expected_rows_data) === json_encode(Craur::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys)));
+assert(json_encode($expected_rows_data) === json_encode(CraurCsvWriter::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys)));
 
