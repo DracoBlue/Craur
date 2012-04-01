@@ -3,6 +3,7 @@
 
 require_once ('Craur.class.php');
 require_once ('CraurCsvWriter.class.php');
+require_once ('CraurCsvReader.class.php');
 
 $arguments = array_slice($argv, 1);
 
@@ -74,7 +75,7 @@ class CraurCli
             
             try
             {
-                $craur = Craur::createFromCsvFileHandle($file_handle, $this->field_mappings);
+                $craur = CraurCsvReader::createFromCsvFileHandle($file_handle, $this->field_mappings);
                 fclose($file_handle);
                 return $craur;
             }
