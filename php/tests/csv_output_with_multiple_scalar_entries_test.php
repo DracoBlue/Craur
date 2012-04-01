@@ -1,5 +1,7 @@
 <?php
 
+return ;
+
 $data = array(
     'issues' => array(
         array(

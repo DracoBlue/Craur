@@ -251,36 +251,99 @@ assert(json_encode(array($data)) == Craur::createFromCsvFile('fixtures/temp_csv_
 unlink('fixtures/temp_csv_file.csv');
 
 
-/* CraurCsvWriter#extractPathsFromObject */
+/* CraurCsvWriter#extractDirectDescendants */
 
-$entry = new Craur(array(
-   'book' => array(
-       'name' => 'My Book',
-       'year' => '2012',
-        'author' => array(
-            'name' => 'Hans',
-            'age' => '32'
-        )
+$craur = new Craur(
+    array(
+        'name' => 'My Book',
+        'year' => '2012',
+        'categories' => array( // Will be ignored
+            'comedy',          
+            'fantasy'           
+        ),
+        'authors' => array( // Will be ignored
+            array('name' => 'Paul'),
+            array('name' => 'Erwin')
+        ),
+        'pages' => '212'
     )
-));
-$raw_mapping_keys = array(
-    'book.name',
-    'book.year',
-    'book.author.name',
-    'book.author.age'
 );
-$raw_identifier_keys = array(
-    'book',
-    'book.author'
+
+$expected_data = array(
+    0 => 'My Book',
+    1 => '2012',
+    4 => '212'
 );
-$expected_rows_data = array(
+
+$result_data = CraurCsvWriter::extractDirectDescendants($craur, array(
+    'name',
+    'year',
+    'categories',
+    'authors.name',
+    'pages'
+), array(
+    'name',
+    'year',
+    'categories[]',
+    'authors[].name',
+    'pages',
+),'');
+
+assert(json_encode($expected_data) == json_encode($result_data)); 
+
+/* CraurCsvWriter#extractAllDescendants */
+
+$craur = new Craur(
+    array(
+        'name' => 'My Book',
+        'year' => '2012',
+        'authors' => array(
+            array('name' => 'Paul', 'age' => '30'),
+            array('name' => 'Erwin', 'age' => '20'),
+        ),
+        'categories' => array(
+            'comedy',
+            'fantasy'
+        ),
+        'pages' => '212'
+    )
+);
+
+$expected_data = array(
     array(
         'My Book',
         '2012',
-        'Hans',
-        '32'
+        'Paul',
+        '30',
+        'comedy',
+        '212'
+    ),
+    array(
+        'My Book',
+        '2012',
+        'Erwin',
+        '20',
+        'fantasy',
+        '212'
     )
 );
 
-assert(json_encode($expected_rows_data) === json_encode(CraurCsvWriter::extractPathsFromObject($entry, $raw_mapping_keys, $raw_identifier_keys)));
+$result_data = CraurCsvWriter::extractAllDescendants($craur, array(
+    'name',
+    'year',
+    'authors.name',
+    'authors.age',
+    'categories',
+    'pages'
+), array(
+    'name',
+    'year',
+    'authors[].name',
+    'authors[].age',
+    'categories[]',
+    'pages',
+),'');
+
+assert(json_encode($expected_data) == json_encode($result_data));
+
 
