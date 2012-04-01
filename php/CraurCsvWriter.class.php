@@ -13,7 +13,6 @@ class CraurCsvWriter {
     {
         $this->root = $root;
         $this->field_mappings = $field_mappings;
-        list($this->raw_mapping_keys) = Craur::getRawMappingAndIdentifiers($this->field_mappings);
     }
     
    /**
@@ -22,7 +21,7 @@ class CraurCsvWriter {
      */
     public function writeToCsvFileHandle($file_handle)
     {
-        $rows = self::extractAllDescendants($this->root, $this->raw_mapping_keys, $this->field_mappings);
+        $rows = self::extractAllDescendants($this->root, $this->field_mappings);
         
         foreach ($rows as $row)
         {
@@ -59,12 +58,6 @@ class CraurCsvWriter {
      *     $result_data = CraurCsvWriter::extractDirectDescendants($craur, array(
      *         'name',
      *         'year',
-     *         'categories',
-     *         'authors.name',
-     *         'pages'
-     *     ), array(
-     *         'name',
-     *         'year',
      *         'categories[]',
      *         'authors[].name',
      *         'pages',
@@ -73,20 +66,20 @@ class CraurCsvWriter {
      *     assert(json_encode($expected_data) == json_encode($result_data)); 
      * @return array
      */
-    static function extractDirectDescendants(Craur $craur, $raw_mapping_keys, $field_mappings, $prefix = '')
+    static function extractDirectDescendants(Craur $craur, $field_mappings, $prefix = '')
     {
         $row = array();
 
-        foreach ($raw_mapping_keys as $pos => $raw_mapping_key_with_prefix)
+        foreach ($field_mappings as $pos => $field_mapping_with_prefix)
         {
-            if (substr($raw_mapping_key_with_prefix, 0, strlen($prefix)) == $prefix)
+            if (substr($field_mapping_with_prefix, 0, strlen($prefix)) == $prefix)
             {
                 /*
                  * Get rid of the prefix
                  */
-                $raw_mapping_key = substr($raw_mapping_key_with_prefix, strlen($prefix));
+                $field_mapping = substr($field_mapping_with_prefix, strlen($prefix));
                 
-                if (strpos($raw_mapping_key, '.') === false)
+                if (strpos($field_mapping, '.') === false)
                 {
                     /*
                      * Something like: name, age or categories
@@ -94,12 +87,12 @@ class CraurCsvWriter {
                      * So the $field_mappings[$pos] is something like: book[].name, book[].author[].age or book[].categories[]
                      * which indicates, if we want one or multiple values
                      */
-                    if (substr($field_mappings[$pos], -2, 2) !== '[]')
+                    if (substr($field_mapping, -2, 2) !== '[]')
                     {
                         /*
                          * We want one value!
                          */
-                        $row[$pos] = $craur->get($raw_mapping_key, '');
+                        $row[$pos] = $craur->get($field_mapping, '');
                         
                     }
                 }
@@ -151,13 +144,6 @@ class CraurCsvWriter {
      *     $result_data = CraurCsvWriter::extractAllDescendants($craur, array(
      *         'name',
      *         'year',
-     *         'authors.name',
-     *         'authors.age',
-     *         'categories',
-     *         'pages'
-     *     ), array(
-     *         'name',
-     *         'year',
      *         'authors[].name',
      *         'authors[].age',
      *         'categories[]',
@@ -168,9 +154,9 @@ class CraurCsvWriter {
      * 
      * @return array
      */
-    static function extractAllDescendants(Craur $craur, $raw_mapping_keys, $field_mappings, $prefix = '', $field_mapping_prefix = '')
+    static function extractAllDescendants(Craur $craur, $field_mappings, $prefix = '')
     {
-        $scalar_values = self::extractDirectDescendants($craur, $raw_mapping_keys, $field_mappings, $prefix);
+        $scalar_values = self::extractDirectDescendants($craur, $field_mappings, $prefix);
         $sub_keys = array();
 
         /*
@@ -178,13 +164,12 @@ class CraurCsvWriter {
          * 
          * e.g. $sub_keys[author][3] => 'name' and $sub_keys[author][4] => 'age'
          */
-        foreach ($raw_mapping_keys as $pos => $raw_mapping_key_with_prefix)
+        foreach ($field_mappings as $pos => $field_mapping_with_prefix)
         {
-            if (substr($raw_mapping_key_with_prefix, 0, strlen($prefix)) == $prefix)
+            if (substr($field_mapping_with_prefix, 0, strlen($prefix)) == $prefix)
             {
-                $raw_mapping_key = substr($raw_mapping_key_with_prefix, strlen($prefix));
-                $raw_field_mapping = substr($field_mappings[$pos], strlen($field_mapping_prefix));
-                if (strpos($raw_field_mapping, '[]') !== false)
+                $field_mapping = substr($field_mapping_with_prefix, strlen($prefix));
+                if (strpos($field_mapping, '[]') !== false)
                 {
                     /*
                      * Something like: author.name, author.age or author.cities
@@ -193,8 +178,8 @@ class CraurCsvWriter {
                      * book[].author[].age or book[].author[].cities 
                      * which indicates, if we want one or multiple values
                      */
-                    $sub_key_root = substr($raw_field_mapping, 0, strpos($raw_field_mapping, '[]'));
-                    $sub_key_value = substr($raw_field_mapping, strpos($raw_field_mapping, '[]') + 3);
+                    $sub_key_root = substr($field_mapping, 0, strpos($field_mapping, '[]'));
+                    $sub_key_value = substr($field_mapping, strpos($field_mapping, '[]') + 3);
                     
                     if (!isset($sub_keys[$sub_key_root]))
                     {
@@ -255,9 +240,8 @@ class CraurCsvWriter {
                      * If we have real sub values (like author[].name and such
                      * stuff, we need to do the recursion)
                      */
-                    $sub_prefix = ($prefix === '' ? '' : $prefix) . $sub_key . '.';
-                    $sub_field_mapping_prefix = ($field_mapping_prefix === '' ? '' : $field_mapping_prefix) . $sub_key . '[].';
-                    $sub_rows = self::extractAllDescendants($sub_entry, $raw_mapping_keys, $field_mappings, $sub_prefix, $sub_field_mapping_prefix);
+                    $sub_prefix = ($prefix === '' ? '' : $prefix) . $sub_key . '[].';
+                    $sub_rows = self::extractAllDescendants($sub_entry, $field_mappings, $sub_prefix);
                 }
                 
                 foreach ($sub_rows as $depth => $sub_row)

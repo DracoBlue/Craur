@@ -4,10 +4,6 @@ $entry = new Craur(array(
     'name' => 'My Book',
     'year' => '2012'
 ));
-$raw_mapping_keys = array(
-    'name',
-    'year'
-);
 $field_mappings = array(
     'name',
     'year'
@@ -17,7 +13,7 @@ $expected_row_data = array(
     '2012'
 );
 
-$results_row_data = CraurCsvWriter::extractAllDescendants($entry, $raw_mapping_keys, $field_mappings);
+$results_row_data = CraurCsvWriter::extractAllDescendants($entry, $field_mappings);
 
 assert(json_encode(array($expected_row_data)) == json_encode($results_row_data));
 
@@ -29,12 +25,6 @@ $entry = new Craur(array(
         'age' => '32'
     )
 ));
-$raw_mapping_keys = array(
-    'name',
-    'year',
-    'author.name',
-    'author.age'
-);
 $field_mappings = array(
     'name',
     'year',
@@ -48,7 +38,7 @@ $expected_row_data = array(
     '32'
 );
 
-$results_row_data = CraurCsvWriter::extractAllDescendants($entry, $raw_mapping_keys, $field_mappings);
+$results_row_data = CraurCsvWriter::extractAllDescendants($entry, $field_mappings);
 
 assert(json_encode(array($expected_row_data)) == json_encode($results_row_data));
 
@@ -61,12 +51,6 @@ $entry = new Craur(array(
         'age' => '32'
     )
 ));
-$raw_mapping_keys = array(
-    'name',
-    'year',
-    'author.name',
-    'author.age'
-);
 $field_mappings = array(
     'name',
     'year',
@@ -80,7 +64,7 @@ $expected_row_data = array(
     '32'
 );
 
-$results_row_data = CraurCsvWriter::extractAllDescendants($entry, $raw_mapping_keys, $field_mappings);
+$results_row_data = CraurCsvWriter::extractAllDescendants($entry, $field_mappings);
 
 assert(json_encode(array($expected_row_data)) == json_encode($results_row_data));
 
@@ -96,12 +80,6 @@ $entry = new Craur(array(
         )
     )
 ));
-$raw_mapping_keys = array(
-    'book.name',
-    'book.year',
-    'book.author.name',
-    'book.author.age'
-);
 $field_mappings = array(
     'book[].name',
     'book[].year',
@@ -115,7 +93,7 @@ $expected_row_data = array(
     '32'
 );
 
-$results_row_data = CraurCsvWriter::extractAllDescendants($entry, $raw_mapping_keys, $field_mappings);
+$results_row_data = CraurCsvWriter::extractAllDescendants($entry, $field_mappings);
 
 assert(json_encode(array($expected_row_data)) == json_encode($results_row_data));
 
@@ -143,12 +121,6 @@ $entry = new Craur(array(
         )
     )
 ));
-$raw_mapping_keys = array(
-    'book.name',
-    'book.year',
-    'book.author.name',
-    'book.author.age'
-);
 $field_mappings = array(
     'book[].name',
     'book[].year',
@@ -170,7 +142,7 @@ $expected_rows_data = array(
     )
 );
 
-$results_row_data = CraurCsvWriter::extractAllDescendants($entry, $raw_mapping_keys, $field_mappings);
+$results_row_data = CraurCsvWriter::extractAllDescendants($entry, $field_mappings);
 
 assert(json_encode($expected_rows_data) == json_encode($results_row_data));
 
@@ -202,12 +174,6 @@ $entry = new Craur(array(
         )
     )
 ));
-$raw_mapping_keys = array(
-    'book.name',
-    'book.year',
-    'book.author.name',
-    'book.author.age'
-);
 $field_mappings = array(
     'book[].name',
     'book[].year',
@@ -235,7 +201,7 @@ $expected_rows_data = array(
     )
 );
 
-$results_row_data = CraurCsvWriter::extractAllDescendants($entry, $raw_mapping_keys, $field_mappings);
+$results_row_data = CraurCsvWriter::extractAllDescendants($entry, $field_mappings);
 
 assert(json_encode($expected_rows_data) == json_encode($results_row_data));
 

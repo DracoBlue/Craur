@@ -278,12 +278,6 @@ $expected_data = array(
 $result_data = CraurCsvWriter::extractDirectDescendants($craur, array(
     'name',
     'year',
-    'categories',
-    'authors.name',
-    'pages'
-), array(
-    'name',
-    'year',
     'categories[]',
     'authors[].name',
     'pages',
@@ -329,13 +323,6 @@ $expected_data = array(
 );
 
 $result_data = CraurCsvWriter::extractAllDescendants($craur, array(
-    'name',
-    'year',
-    'authors.name',
-    'authors.age',
-    'categories',
-    'pages'
-), array(
     'name',
     'year',
     'authors[].name',
