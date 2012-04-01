@@ -237,3 +237,100 @@ $result_data = CraurCsvWriter::extractAllDescendants($craur, array(
 assert(json_encode($expected_data) == json_encode($result_data));
 
 
+/* CraurCsvReader#mergePathEntriesRecursive */
+
+$entries = array(
+    array(
+        'book' => array(
+            'name' => 'My Book',
+            'year' => 2012,
+            'author' => array(
+                'name' => 'Hans',
+                'age' => '32'
+            )
+        )
+    ),
+    array(
+        'book' => array(
+            'name' => 'My Book',
+            'year' => 2012,
+            'author' => array(
+                'name' => 'Paul',
+                'age' => '20'
+            )
+        )
+    ),
+    array(
+        'book' => array(
+            'name' => 'My second Book',
+            'year' => 2010,
+            'author' => array(
+                'name' => 'Erwin',
+                'age' => '10'
+            )
+        )
+    )
+);
+$merged_entries = CraurCsvReader::mergePathEntriesRecursive($entries);
+assert(count($merged_entries) === 1);
+assert(json_encode(array(
+    'book' => array(
+        array(
+            'name' => 'My Book',
+            'year' => 2012,
+            'author' => array(
+                array(
+                    'name' => 'Hans',
+                    'age' => '32'
+                ),
+                array(
+                    'name' => 'Paul',
+                    'age' => '20'
+                )
+            )
+        ),
+        array(
+            'name' => 'My second Book',
+            'year' => 2010,
+            'author' => array(
+                array(
+                    'name' => 'Erwin',
+                    'age' => '10'
+                )
+            )
+        )
+    )
+)) === json_encode($merged_entries[0]));
+
+
+/* CraurCsvReader#expandPathsIntoArray */
+
+$row_data = array(
+    'My Book',
+    2012,
+    'Hans',
+    '32'
+);
+$raw_mapping_keys = array(
+    'book.name',
+    'book.year',
+    'book.author.name',
+    'book.author.age'
+);
+$raw_identifier_keys = array(
+    'book',
+    'book.author'
+);
+$expected_entry = array(
+   'book' => array(
+       'name' => 'My Book',
+       'year' => 2012,
+        'author' => array(
+            'name' => 'Hans',
+            'age' => '32'
+        )
+    )
+);
+
+assert(json_encode($expected_entry) === json_encode(CraurCsvReader::expandPathsIntoArray($row_data, $raw_mapping_keys, $raw_identifier_keys)));
+

@@ -7,10 +7,11 @@
 
 require_once(dirname(__FILE__) . '/Craur.class.php');
 require_once(dirname(__FILE__) . '/CraurCsvWriter.class.php');
+require_once(dirname(__FILE__) . '/CraurCsvReader.class.php');
 
 $result = array();
 
-foreach (array('Craur', 'CraurCsvWriter') as $class_name)
+foreach (array('Craur', 'CraurCsvWriter', 'CraurCsvReader') as $class_name)
 {
     
     $reflection = new ReflectionClass($class_name);
