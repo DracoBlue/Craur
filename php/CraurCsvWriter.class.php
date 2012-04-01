@@ -157,54 +157,18 @@ class CraurCsvWriter {
     static function extractAllDescendants(Craur $craur, $field_mappings, $prefix = '')
     {
         $scalar_values = self::extractDirectDescendants($craur, $field_mappings, $prefix);
-        $sub_keys = array();
-
-        /*
-         * Get rid of the prefix and fetch all possible sub_keys with valid position:
-         * 
-         * e.g. $sub_keys[author][3] => 'name' and $sub_keys[author][4] => 'age'
-         */
-        foreach ($field_mappings as $pos => $field_mapping_with_prefix)
+        $sub_keys = self::getSubKeysForFieldMappingAndPrefix($field_mappings, $prefix);
+        
+        foreach ($sub_keys as $sub_key => $fields)
         {
-            if (substr($field_mapping_with_prefix, 0, strlen($prefix)) == $prefix)
+            foreach ($fields as $pos => $field_path) 
             {
-                $field_mapping = substr($field_mapping_with_prefix, strlen($prefix));
-                if (strpos($field_mapping, '[]') !== false)
-                {
-                    /*
-                     * Something like: author.name, author.age or author.cities
-                     * 
-                     * So the $field_mappings[$pos] is something like: book[].author[].name,
-                     * book[].author[].age or book[].author[].cities 
-                     * which indicates, if we want one or multiple values
-                     */
-                    $sub_key_root = substr($field_mapping, 0, strpos($field_mapping, '[]'));
-                    $sub_key_value = substr($field_mapping, strpos($field_mapping, '[]') + 3);
-                    
-                    if (!isset($sub_keys[$sub_key_root]))
-                    {
-                        $sub_keys[$sub_key_root] = array();
-                    }
-                    $sub_keys[$sub_key_root][$pos] = $sub_key_value;
-                    /*
-                     * Default value must be empty, if we have none!
-                     */
-                    $scalar_values[$pos] = '';
-                }
+                /*
+                 * Default value must be empty, if we have none!
+                 */
+                $scalar_values[$pos] = '';
             }
         }
-
-        /* 
-         * $sub_keys looks like this now: array(
-         *     'author' => array(
-         *         3 => 'name',
-         *         4 => 'age'
-         *     ),
-         *     'categories' => array(
-         *         5 => ''
-         *     )
-         * )
-         */
 
         $rows = array();
 
@@ -287,5 +251,83 @@ class CraurCsvWriter {
          */
         return $sub_entries;
     }
+
+
+    static function getSubKeysForFieldMappingAndPrefix($field_mappings, $prefix)
+    {
+        $sub_keys = array();
+        
+        /*
+         * Get rid of the prefix and fetch all possible sub_keys with valid position:
+         * 
+         * e.g. $sub_keys[author][3] => 'name' and $sub_keys[author][4] => 'age'
+         */
+        foreach ($field_mappings as $pos => $field_mapping_with_prefix)
+        {
+            if (substr($field_mapping_with_prefix, 0, strlen($prefix)) == $prefix)
+            {
+                $field_mapping = substr($field_mapping_with_prefix, strlen($prefix));
+                if (strpos($field_mapping, '[]') !== false)
+                {
+                    /*
+                     * Something like: author.name, author.age or author.cities
+                     * 
+                     * So the $field_mappings[$pos] is something like: book[].author[].name,
+                     * book[].author[].age or book[].author[].cities 
+                     * which indicates, if we want one or multiple values
+                     */
+                    $sub_key_root = substr($field_mapping, 0, strpos($field_mapping, '[]'));
+                    $sub_key_value = substr($field_mapping, strpos($field_mapping, '[]') + 3);
+                    
+                    if (!isset($sub_keys[$sub_key_root]))
+                    {
+                        $sub_keys[$sub_key_root] = array();
+                    }
+                    $sub_keys[$sub_key_root][$pos] = $sub_key_value;
+                }
+            }
+        }
+
+        /* 
+         * $sub_keys looks like this now: array(
+         *     'author' => array(
+         *         3 => 'name',
+         *         4 => 'age'
+         *     ),
+         *     'categories' => array(
+         *         5 => ''
+         *     )
+         * )
+         */
+        return $sub_keys;
+    } 
+
+    static function getDirectKeysForFieldMappingAndPrefix($field_mappings, $prefix)
+    {
+        $direct_keys = array();
+        
+        /*
+         * Get rid of the prefix and fetch all possible $direct_keys (without a []).
+         */
+        foreach ($field_mappings as $pos => $field_mapping_with_prefix)
+        {
+            if (substr($field_mapping_with_prefix, 0, strlen($prefix)) == $prefix)
+            {
+                $field_mapping = substr($field_mapping_with_prefix, strlen($prefix));
+                if (strpos($field_mapping, '[]') === false)
+                {
+                    $direct_keys[$pos] = $field_mapping;
+                }
+            }
+        }
+
+        /* 
+         * $direct_keys looks like this now: array(
+         *     3 => 'name',
+         *     4 => 'age'
+         * )
+         */
+        return $direct_keys;
+    } 
 
 }

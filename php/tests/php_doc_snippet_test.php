@@ -311,15 +311,11 @@ $row_data = array(
     'Hans',
     '32'
 );
-$raw_mapping_keys = array(
-    'book.name',
-    'book.year',
-    'book.author.name',
-    'book.author.age'
-);
-$raw_identifier_keys = array(
-    'book',
-    'book.author'
+$field_mappings = array(
+    'book[].name',
+    'book[].year',
+    'book[].author[].name',
+    'book[].author[].age'
 );
 $expected_entry = array(
    'book' => array(
@@ -332,5 +328,5 @@ $expected_entry = array(
     )
 );
 
-assert(json_encode($expected_entry) === json_encode(CraurCsvReader::expandPathsIntoArray($row_data, $raw_mapping_keys, $raw_identifier_keys)));
+assert(json_encode($expected_entry) === json_encode(CraurCsvReader::expandPathsIntoArray($row_data, $field_mappings)));
 

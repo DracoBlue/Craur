@@ -12,8 +12,6 @@ class CraurCsvReader
         
         $current_entry = array();
         
-        list($raw_mapping_keys, $raw_identifier_keys) = self::getRawMappingAndIdentifiers($field_mappings);
-
         $entries = array();
         
         while (($row_data = fgetcsv($file_handle, 23085, ";")) !== FALSE)
@@ -21,7 +19,7 @@ class CraurCsvReader
             $row_number++;
             if ($row_number != 1)
             {
-                $entries[] = self::expandPathsIntoArray($row_data, $raw_mapping_keys, $raw_identifier_keys);
+                $entries[] = self::expandPathsIntoArray($row_data, $field_mappings);
             }
         }
         
@@ -30,72 +28,6 @@ class CraurCsvReader
         return new Craur($merged_entries);   
     }
     
-    /**
-     * Generates the raw mapping and raw identifiers for a given set of field mappings.
-     * 
-     * @private
-     */
-    static function getRawMappingAndIdentifiers(array $field_mappings)
-    {
-        $raw_mapping_keys = array();
-        $raw_identifier_keys = array();
-        
-        /*
-         * $field_mappings is: array('book[].name', 'book[].year', 'book[].author[].name', 'book[].author[].age')
-         */
-        foreach ($field_mappings as $field_mapping)
-        {
-            /*
-             * $field_mapping is something like: book[].author[].name
-             */
-            $last_brackets_pos = strrpos($field_mapping, '[]');
-            if ($last_brackets_pos !== false)
-            {
-                $raw_identifier_key = substr($field_mapping, 0, $last_brackets_pos);
-                $raw_identifier_key = str_replace('[]', '', $raw_identifier_key);
-                /*
-                 * $raw_identifier_key is now just: book.author
-                 */
-                $raw_identifier_keys[$raw_identifier_key] = $raw_identifier_key;
-            }
-            
-            $raw_mapping_keys[] = str_replace('[]', '', $field_mapping);
-        }
-        
-        /*
-         * $raw_mapping_keys is now: array('book.name', 'book.year', 'book.author.name', 'book.author.age')
-         */
-
-        $raw_identifier_keys_with_holes = array_values($raw_identifier_keys);
-        
-        /*
-         * $raw_identifier_keys_with_holes is now just: array('book', 'book.city.place')
-         */
-        
-        /*
-         * Sometimes we are missing a subkey (like book.city, thus we need to be sure
-         * we have them all)
-         */
-        $raw_identifier_keys = array();
-        foreach ($raw_identifier_keys_with_holes as $raw_identifier_key)
-        {
-            $current_path = array();
-            foreach (explode('.', $raw_identifier_key) as $key_part)
-            {
-                $current_path[] = $key_part;
-                $raw_identifier_keys[] = implode('.', $current_path);
-            }
-        }
-        
-        $raw_identifier_keys = array_unique($raw_identifier_keys);
-        
-        /*
-         * $raw_identifier_keys is now just: array('book', 'book.city', 'book.city.place')
-         */
-
-        return array($raw_mapping_keys, $raw_identifier_keys);
-    }
-
     /**
      * This function is used internally to merge the entries from
      * expandPathsIntoArray into a proper form.
@@ -249,6 +181,17 @@ class CraurCsvReader
                     $result_entry[$object_key] = self::mergePathEntriesRecursive($result_entry[$object_key]);                        
                 }
             }
+            
+            /*
+             * We may have an result entry, which is just a numeric array with exactly one element.
+             * In this case we don't want to have this, so we get the sub entry.
+             * 
+             * FIXME: check if this is handling every use case properly! Looks hacky ...
+             */
+            if (isset($result_entry[0]) && !isset($result_entry[1]))
+            {
+                $result_entry = $result_entry[0];
+            }
             $result_entries[] = $result_entry;
         }
         
@@ -267,15 +210,11 @@ class CraurCsvReader
      *          'Hans',
      *          '32'
      *      );
-     *      $raw_mapping_keys = array(
-     *          'book.name',
-     *          'book.year',
-     *          'book.author.name',
-     *          'book.author.age'
-     *      );
-     *      $raw_identifier_keys = array(
-     *          'book',
-     *          'book.author'
+     *      $field_mappings = array(
+     *          'book[].name',
+     *          'book[].year',
+     *          'book[].author[].name',
+     *          'book[].author[].age'
      *      );
      *      $expected_entry = array(
      *         'book' => array(
@@ -288,91 +227,49 @@ class CraurCsvReader
      *          )
      *      );
      * 
-     *      assert(json_encode($expected_entry) === json_encode(CraurCsvReader::expandPathsIntoArray($row_data, $raw_mapping_keys, $raw_identifier_keys)));
+     *      assert(json_encode($expected_entry) === json_encode(CraurCsvReader::expandPathsIntoArray($row_data, $field_mappings)));
      * @return array
      */
-    static function expandPathsIntoArray(array $row_data, array $raw_mapping_keys, array $raw_identifier_keys)
+    static function expandPathsIntoArray(array $row_data, array $field_mappings, $prefix = '')
     {
+        $sub_keys = CraurCsvWriter::getSubKeysForFieldMappingAndPrefix($field_mappings, $prefix);
+        $direct_keys = CraurCsvWriter::getDirectKeysForFieldMappingAndPrefix($field_mappings, $prefix);
+        
         $entry = array();
         
-        $entry_sub_entries = array();
-        
-        /*
-         * First of all, extract all direct keys (no . in the name).
-         * 
-         * e.g.: name, age
-         */
-        foreach ($raw_mapping_keys as $pos => $raw_mapping_key)
+        foreach ($direct_keys as $pos => $direct_key)
         {
-            if (array_key_exists($pos, $row_data))
+            if (!empty($row_data[$pos]))
             {
-                if (strpos($raw_mapping_key, '.') !== false)
-                {
-                    /*
-                     * Something like: book.author
-                     */
-                    $entry_sub_entries[$raw_mapping_key] = $row_data[$pos];
-                }
-                else
-                {
-                    /*
-                     * Something like: name
-                     */
-                    $entry[$raw_mapping_key] = $row_data[$pos];
-                }
+                $entry[$direct_key] = $row_data[$pos];    
             }
         }
         
-        /*
-         * $entry looks now like this: array('name' => 'My Book', 'year' => 2012);
-         * $entry_sub_entries looks now like this: array('author.name' => 'hans', 'author.age' => 32);
-         */
-        
-        /*
-         * Now retrieve all data which is stored within an element (e.g. the name in author.name)
-         */
-        foreach ($raw_identifier_keys as $raw_identifier_key)
+        foreach($sub_keys as $sub_key => $fields)
         {
-            if (strpos($raw_identifier_key, '.') !== false)
+            /*
+             * If we have real sub values (like author[].name and such
+             * stuff, we need to do the recursion)
+             */
+            $sub_prefix = ($prefix === '' ? '' : $prefix) . $sub_key . '[]';
+
+            /*
+             * If we don't have something like author[].name and we
+             * have just: categories[], we can luckily do an implode
+             * on all fields (which are empty) :).
+             * 
+             * In this case, we just want to (string)-casted value without
+             * the dot. Otherwise we need to add a . to the prefix!
+             */
+            if (implode('', $fields) !== '')
             {
-                /*
-                 * We have a key like book.author.name, will be handled after recursion!
-                 */
-                continue ;
+                $sub_prefix .= '.';    
             }
-            $sub_raw_identifier_keys = array();
-            $sub_raw_mapping_keys = array();
-            $sub_raw_data = array();
-            $sub_pos = 0;
-            foreach ($raw_mapping_keys as $pos => $raw_mapping_key)
+            $entry[$sub_key] = self::expandPathsIntoArray($row_data, $field_mappings, $sub_prefix);  
+            if (empty($entry[$sub_key]))
             {
-                if (array_key_exists($pos, $row_data))
-                {
-                    if (substr($raw_mapping_key, 0, strlen($raw_identifier_key) + 1) == $raw_identifier_key . '.')
-                    {
-                        $sub_raw_mapping_keys[] = substr($raw_mapping_key, strlen($raw_identifier_key) + 1);
-                        if (strlen($row_data[$pos]) > 0)
-                        {
-                            $sub_raw_data[$sub_pos] = $row_data[$pos];
-                        }
-                        $sub_pos++;
-                    }
-                }
+                unset($entry[$sub_key]);
             }
-            foreach ($raw_identifier_keys as $sub_raw_identifier_key)
-            {
-                if (substr($sub_raw_identifier_key, 0, strlen($raw_identifier_key) + 1) == $raw_identifier_key . '.')
-                {
-                    $sub_raw_identifier_keys[] = substr($sub_raw_identifier_key, strlen($raw_identifier_key) + 1);
-                }
-            }
-            
-            if (empty($sub_raw_data))
-            {
-                continue ;
-            }
-            
-            $entry[$raw_identifier_key] = self::expandPathsIntoArray($sub_raw_data, $sub_raw_mapping_keys, $sub_raw_identifier_keys);
         }
         
         return $entry;
