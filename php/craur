@@ -2,8 +2,6 @@
 <?php
 
 require_once ('Craur.class.php');
-require_once ('CraurCsvWriter.class.php');
-require_once ('CraurCsvReader.class.php');
 
 $arguments = array_slice($argv, 1);
 
