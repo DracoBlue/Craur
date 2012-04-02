@@ -173,7 +173,6 @@ $expected_entries = array(
 );
 $merged_entries = CraurCsvReader::mergePathEntriesRecursive($entries);
 
-print_r($merged_entries);
 assert(count($merged_entries) === 1);
 assert(json_encode($expected_entries) === json_encode($merged_entries[0]));
 

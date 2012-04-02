@@ -23,7 +23,6 @@ foreach ($shelf->get('book[]') as $book)
             assert(in_array($author->get('name'), array('Hans', 'Paul')));
         }
         assert(count($book->get('category[]')) === 1);
-        print_r($book->get('category'));
         assert($book->get('category') == 'Fantasy');
     }
     elseif ($book->get('name') === 'My second Book')
