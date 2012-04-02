@@ -1,8 +1,7 @@
 # Craur
 
-* Version: 1.5-dev
-* Latest Stable: 1.4.1, see <https://github.com/DracoBlue/Craur/tags>
-* Date: Not yet released
+* Version: 1.5.0
+* Date: 2012/04/02
 * Build Status: [![Build Status](https://secure.travis-ci.org/DracoBlue/Craur.png?branch=master)](http://travis-ci.org/DracoBlue/Craur), 100% Code Coverage
 
 The library craur has two main purposes:
@@ -331,7 +330,7 @@ element, you can do this:
 
 ## Changelog
 
-- 1.5-dev
+- 1.5.0 (2012/04/02)
   - added cli for craur
   - added `saveToCsvFile($file_path, array $field_mappings)`
   - added `writeToCsvFileHandle($file_handle, array $field_mappings)`
