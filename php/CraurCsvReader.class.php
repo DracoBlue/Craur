@@ -170,7 +170,25 @@ class CraurCsvReader
                 {
                     if (isset($entry[$object_key]))
                     {
-                        $result_entry[$object_key][] = $entry[$object_key];                        
+                        /*
+                         * If we have something like $category => array('fantasy', 'comedy')
+                         * we want to add them each by one
+                         */
+                        if (isset($entry[$object_key][0]))
+                        {
+                            foreach ($entry[$object_key] as $sub_value)
+                            {
+                                $result_entry[$object_key][] = $sub_value;                        
+                            }
+                        }
+                        else
+                        {
+                            /*
+                             * If we have something like $name => 'hans' we want to append
+                             * it to the previous author names
+                             */
+                            $result_entry[$object_key][] = $entry[$object_key];                        
+                        }
                     }
                 }
             }
@@ -178,20 +196,16 @@ class CraurCsvReader
             {
                 if (isset($result_entry[$object_key]))
                 {
-                    $result_entry[$object_key] = self::mergePathEntriesRecursive($result_entry[$object_key]);                        
+                    /*
+                     * If we have no scalar values (NOT "comedy" or "fantasy", but entire book entries)
+                     */
+                    if (count($result_entry[$object_key]) > 0 && !is_scalar($result_entry[$object_key][0]))
+                    {
+                        $result_entry[$object_key] = self::mergePathEntriesRecursive($result_entry[$object_key]);                        
+                    }
                 }
             }
             
-            /*
-             * We may have an result entry, which is just a numeric array with exactly one element.
-             * In this case we don't want to have this, so we get the sub entry.
-             * 
-             * FIXME: check if this is handling every use case properly! Looks hacky ...
-             */
-            if (isset($result_entry[0]) && !isset($result_entry[1]))
-            {
-                $result_entry = $result_entry[0];
-            }
             $result_entries[] = $result_entry;
         }
         
@@ -241,7 +255,14 @@ class CraurCsvReader
         {
             if (!empty($row_data[$pos]))
             {
-                $entry[$direct_key] = $row_data[$pos];    
+                if (empty($direct_key))
+                {
+                    $entry[] = $row_data[$pos];
+                }
+                else
+                {
+                    $entry[$direct_key] = $row_data[$pos];
+                }
             }
         }
         

@@ -1,7 +1,7 @@
 # Craur
 
-* Version: 1.5.0
-* Date: 2012/04/02
+* Version: 1.5.1
+* Date: 2012/04/05
 * Build Status: [![Build Status](https://secure.travis-ci.org/DracoBlue/Craur.png?branch=master)](http://travis-ci.org/DracoBlue/Craur), 100% Code Coverage
 
 The library craur has two main purposes:
@@ -330,6 +330,8 @@ element, you can do this:
 
 ## Changelog
 
+- 1.5.1 (2012/04/05)
+  - allow same csv mapping for multiple columns
 - 1.5.0 (2012/04/02)
   - added cli for craur
   - added `saveToCsvFile($file_path, array $field_mappings)`
