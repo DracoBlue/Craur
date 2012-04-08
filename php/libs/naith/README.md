@@ -1,7 +1,9 @@
 # naith
 
-* Version: 1.0.0
-* Date: 2012/03/25
+* Version: 1.1.0
+* Date: 2012/04/08
+* Build Status: [![Build Status](https://secure.travis-ci.org/DracoBlue/naith.png?branch=master)](http://travis-ci.org/DracoBlue/naith), 100% Code Coverage
+
 
 Naith is a small (~100 loc) php test runner and report generator (with code coverage) for the command line.
 
@@ -39,6 +41,13 @@ Result is:
     Everything is tested. Awesome!
 
 That's it.
+
+## Changelog
+
+- 1.1.0 (2012/04/08)
+  - junit.xml generation added
+- 1.0.0 (2012/03/25)
+  - initial release
 
 ## Todo
 

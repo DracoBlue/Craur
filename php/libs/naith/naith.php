@@ -6,6 +6,7 @@ error_reporting(E_ALL | E_STRICT);
 
 require_once (dirname(__FILE__) . '/NaithCliRunner.class.php');
 require_once (dirname(__FILE__) . '/NaithCliReport.class.php');
+require_once (dirname(__FILE__) . '/NaithJunitReport.class.php');
 
 /*
  * Argument handling!
@@ -75,14 +76,14 @@ if (in_array($action_name, array("make-coverage-overview", "make-untested-code-o
     {
         list($base_directory) = $options['base_directory'];
     }
-
+    
     list($coverage_file_path) = $options['coverage_file_path'];
-
+    
     $report = new NaithCliReport( array(
         'base_directory' => $base_directory,
         'excluded_paths' => $excluded_paths,
         'coverage_file_path' => $coverage_file_path,
-        'minimum_code_coverage' => $minimum_code_coverage
+        'minimum_code_coverage' => $minimum_code_coverage,
     ));
 }
 
@@ -93,6 +94,11 @@ switch ($action_name)
         if (isset($options['coverage_file_path']))
         {
             NaithCliRunner::setCoverageFilePath($options['coverage_file_path'][0]);
+        }
+        
+        if (isset($options['tests_report_path']))
+        {
+            NaithCliRunner::setTestsReportPath($options['tests_report_path'][0], $options['test_file'][0]);
         }
 
         NaithCliRunner::bootstrapForTest();
@@ -123,6 +129,45 @@ switch ($action_name)
 
     case "make-untested-code-overview":
         $report->makeUntestedCodeOverview();
+
+        break;
+
+    case "generate-junit-xml":
+        
+        $junit_xml_path = null;
+    
+        if (isset($options['junit_xml_path']))
+        {
+            list($junit_xml_path) = $options['junit_xml_path'];
+        }
+
+        $excluded_paths = array();
+        if (isset($options['excluded_path']))
+        {
+            $excluded_paths = $options['excluded_path'];
+        }
+
+        $base_directory = dirname(getcwd());
+    
+        if (isset($options['base_directory']))
+        {
+            list($base_directory) = $options['base_directory'];
+        }
+    
+        $tests_report_path = null;
+    
+        if (isset($options['tests_report_path']))
+        {
+            list($tests_report_path) = $options['tests_report_path'];
+        }
+    
+        $report = new NaithJunitReport( array(
+            'base_directory' => $base_directory,
+            'excluded_paths' => $excluded_paths,
+            'tests_report_path' => $tests_report_path
+        ));
+
+        $report->writeJunitXmlToFile($junit_xml_path);
 
         break;
 }
