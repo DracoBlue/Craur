@@ -1,7 +1,7 @@
 # Craur
 
-* Version: 1.5.1
-* Date: 2012/04/05
+* Version: 1.5.2
+* Date: 2012/04/13
 * Build Status: [![Build Status](https://secure.travis-ci.org/DracoBlue/Craur.png?branch=master)](http://travis-ci.org/DracoBlue/Craur), 100% Code Coverage
 
 The library craur has two main purposes:
@@ -78,7 +78,7 @@ Will create and return a new craur instance for the given JSON string.
      $authors = $node->get('book.authors[]');
      assert(count($authors) == 2);
 
-### Craur::createFromXml(`$xml_string`) : `Craur`
+### Craur::createFromXml(`$xml_string[, $encoding = 'utf-8']) : `Craur`
 
 Will create and return a new craur instance for the given XML string.
 
@@ -330,6 +330,9 @@ element, you can do this:
 
 ## Changelog
 
+- 1.5.2 (2012/04/12)
+  - strip invalid utf8 characters in createFromXml
+  - added encoding parameter for createFromXml
 - 1.5.1 (2012/04/05)
   - allow same csv mapping for multiple columns
 - 1.5.0 (2012/04/02)

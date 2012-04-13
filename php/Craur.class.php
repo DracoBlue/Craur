@@ -39,8 +39,15 @@ class Craur
      * 
      * @return Craur
      */
-    static function createFromXml($xml_string)
+    static function createFromXml($xml_string, $encoding = 'utf-8')
     {
+        $xml_string = preg_replace('/[\x1-\x8\xB-\xC\xE-\x1F]/', '', $xml_string);
+        
+        if ($encoding != 'utf-8')
+        {
+            $xml_string = iconv($encoding, 'utf-8', $xml_string);
+        }
+        
         $node = new DOMDocument('1.0', 'utf-8');
         $is_loaded = $node->loadXML($xml_string, LIBXML_NOCDATA | LIBXML_NOWARNING | LIBXML_NOERROR);
         
