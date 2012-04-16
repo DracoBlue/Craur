@@ -1,7 +1,7 @@
 # Craur
 
-* Version: 1.5.2
-* Date: 2012/04/13
+* Version: 1.5.3
+* Date: 2012/04/16
 * Build Status: [![Build Status](https://secure.travis-ci.org/DracoBlue/Craur.png?branch=master)](http://travis-ci.org/DracoBlue/Craur), 100% Code Coverage
 
 The library craur has two main purposes:
@@ -85,6 +85,14 @@ Will create and return a new craur instance for the given XML string.
       $node = Craur::createFromXml('<book><author>Hans</author><author>Paul</author></book>');
       $authors = $node->get('book.author[]');
       assert(count($authors) == 2);
+
+### Craur::createFromHtml(`$html_string[, $encoding = 'utf-8']) : `Craur`
+
+Will create and return a new craur instance for the given HTML string.
+
+    $node = Craur::createFromHtml('<html><head><title>Hans</title></head><body>Paul</body></html>');
+    assert($node->get('html.head.title') == 'Hans');
+    assert($node->get('html.body') == 'Paul');
 
 ### Craur::createFromCsvFile(`$file_path, array $field_mappings`) : `Craur`
 
@@ -330,6 +338,8 @@ element, you can do this:
 
 ## Changelog
 
+- 1.5.3 (2012/04/16)
+  - added `Craur::createFromHtml($html_string, $encoding = 'utf-8')`
 - 1.5.2 (2012/04/12)
   - strip invalid utf8 characters in createFromXml
   - added encoding parameter for createFromXml

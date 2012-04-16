@@ -78,6 +78,50 @@ class Craur
         return new Craur($data);
     }
 
+    /**
+     * Create a new `Craur` from a given HTML-string.
+     * 
+     * @example 
+     *     $node = Craur::createFromHtml('<html><head><title>Hans</title></head><body>Paul</body></html>');
+     *     assert($node->get('html.head.title') == 'Hans');
+     *     assert($node->get('html.body') == 'Paul');
+     * 
+     * @return Craur
+     */
+    static function createFromHtml($html_string, $encoding = 'utf-8')
+    {
+        $html_string = preg_replace('/[\x1-\x8\xB-\xC\xE-\x1F]/', '', $html_string);
+        
+        if ($encoding != 'utf-8')
+        {
+            $html_string = iconv($encoding, 'utf-8', $html_string);
+        }
+        
+        $node = new DOMDocument('1.0', 'utf-8');
+        
+        /*
+         * FIXME: Can we check if that was enabled in first place?
+         */
+        libxml_use_internal_errors(true);
+        $node->loadHTML($html_string);
+        $error = libxml_get_last_error();
+        libxml_use_internal_errors(false);        
+        
+        if ($error) 
+        {
+            throw new Exception('Invalid html (' . trim($error->message) . ', line: ' . $error->line . ', col: ' . $error->column . '): ' . $html_string);
+        }
+
+        $data = self::convertDomNodeToDataArray($node);
+        
+        /*
+         * We don't need to parse for namespaces here (like in the xml case), 
+         * because namespaces are just attributes in html!
+         */
+        
+        return new Craur($data);
+    }
+
     static function convertDomNodeToDataArray(DomNode $node)
     {
         $data = array();
@@ -88,6 +132,16 @@ class Craur
         {
             foreach ($node->childNodes as $child_node)
             {
+                /*
+                 * A html dom node always contains one dom document type child
+                 * node with no content (DOMDocumentType#internalSubset is for
+                 * example <!DOCTYPE html>). Ignore it!
+                 */
+                if ($child_node instanceof DOMDocumentType)
+                {
+                    continue ;
+                }
+                
                 if ($child_node->nodeType === XML_TEXT_NODE)
                 {
                     $has_value = true;

@@ -13,6 +13,13 @@ $authors = $node->get('book.author[]');
 assert(count($authors) == 2);
 
 
+/* Craur#createFromHtml */
+
+$node = Craur::createFromHtml('<html><head><title>Hans</title></head><body>Paul</body></html>');
+assert($node->get('html.head.title') == 'Hans');
+assert($node->get('html.body') == 'Paul');
+
+
 /* Craur#createFromCsvFile */
 
 // If the file loooks like this:
