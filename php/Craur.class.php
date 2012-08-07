@@ -99,6 +99,13 @@ class Craur
         
         $node = new DOMDocument('1.0', 'utf-8');
         
+        $is_just_a_fragment = (strpos(strtolower($html_string), '<html') === false) ? true : false;
+        
+        if ($is_just_a_fragment)
+        {
+        	$html_string = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=' . $encoding . '"/></head><body>' . $html_string . '</body></html>';
+        }
+        
         /*
          * FIXME: Can we check if that was enabled in first place?
          */
@@ -111,8 +118,13 @@ class Craur
         {
             throw new Exception('Invalid html (' . trim($error->message) . ', line: ' . $error->line . ', col: ' . $error->column . '): ' . $html_string);
         }
-
+        
         $data = self::convertDomNodeToDataArray($node);
+        
+        if ($is_just_a_fragment)
+        {
+        	$data = $data['html']['body'];	
+        }
         
         /*
          * We don't need to parse for namespaces here (like in the xml case), 

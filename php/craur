@@ -65,6 +65,11 @@ class CraurCli
             return Craur::createFromXml($input_string);
         }
         
+        if ($input_format === 'html')
+        {
+            return Craur::createFromHtml($input_string);
+        }
+        
         if ($input_format === 'csv')
         {
             $file_handle = tmpfile();
