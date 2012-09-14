@@ -15,6 +15,6 @@
         "php": ">=5.2.0"
     },
     "autoload": {
-        "classmap" : ['php/Craur.class.php']
+        "classmap" : ["php/Craur.class.php"]
     }
 }
