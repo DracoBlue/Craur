@@ -1,5 +1,5 @@
 {
-    "name": "Craur/Craur",
+    "name": "craur/craur",
     "type": "library",
     "description": "A lossless xml to json and json to xml converter (and csv). Writing PHP Json/Xml/Csv Importers made easy.",
     "keywords": ["import", "export", "csv", "json", "xml"],
