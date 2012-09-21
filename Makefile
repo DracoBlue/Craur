@@ -8,11 +8,11 @@ help:
 
 test:
 
-	@cd php && ../vendor/naith/naith/naith run
+	@cd php && vendor/naith/naith/naith run
 
 test-constant:
 
-	@cd php && ../vendor/naith/naith/naith run-constant
+	@cd php && vendor/naith/naith/naith run-constant
 
 install-composer:
 
@@ -22,7 +22,7 @@ install-composer:
 install-dependencies:
 
 	@make install-composer
-	@php -d date.timezone="Europe/Berlin" ./bin/composer.phar -- update
+	@cd php && php -d date.timezone="Europe/Berlin" ./../bin/composer.phar -- update
 	
 .PHONY: test help
 
