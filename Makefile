@@ -8,11 +8,21 @@ help:
 
 test:
 
-	@cd php && libs/naith/naith run
+	@cd php && ../vendor/naith/naith/naith run
 
 test-constant:
 
-	@cd php && libs/naith/naith run-constant
+	@cd php && ../vendor/naith/naith/naith run-constant
+
+install-composer:
+
+	@if [ ! -d ./bin ]; then mkdir bin; fi
+	@if [ ! -f ./bin/composer.phar ]; then curl -s http://getcomposer.org/installer | php -n -d date.timezone="Europe/Berlin" -- --install-dir=./bin/; fi
+
+install-dependencies:
+
+	@make install-composer
+	@php -d date.timezone="Europe/Berlin" ./bin/composer.phar -- update
 	
 .PHONY: test help
 

@@ -1,7 +1,7 @@
 # Craur
 
-* Version: 1.6.0
-* Date: 2012/08/07
+* Version: 1.7-dev
+* Date: not-yet-released
 * Build Status: [![Build Status](https://secure.travis-ci.org/DracoBlue/Craur.png?branch=master)](http://travis-ci.org/DracoBlue/Craur), 100% Code Coverage
 
 The library craur has two main purposes:
@@ -338,6 +338,9 @@ element, you can do this:
 
 ## Changelog
 
+- 1.7-dev
+  - excluded naith into composer.json
+  - added composer.json for dependency managment
 - 1.6.0 (2012/08/07)
   - added html as input_format to craur cli
   - added possibility to load html fragments (breaking change: fragments no longer create html.body stub)

@@ -1,21 +1,28 @@
 {
-    "name": "craur/craur",
-    "type": "library",
-    "version": "1.6.0",
-    "description": "A lossless xml to json and json to xml converter (and csv). Writing PHP Json/Xml/Csv Importers made easy.",
-    "keywords": ["import", "export", "csv", "json", "xml"],
-    "homepage": "https://github.com/DracoBlue/Craur",
-    "license": "MIT",
-    "authors": [
+    "repositories": [
         {
-            "name": "DracoBlue",
-            "email": "JanS@DracoBlue.de"
+            "type": "package",
+            "package": {
+                "name": "naith/naith",
+                "version": "1.1.1",
+                "source": {
+                    "url": "https://github.com/DracoBlue/naith.git",
+                    "type": "git",
+                    "reference": "298a0068bfc3f1204bcc34506a0aa1e35346c109"
+                }
+            }
+        },
+        {
+            "type": "pear",
+            "url": "http://pear.pearplex.net/",
+            "vendor-alias": "pearplex"
         }
     ],
     "require": {
-        "php": ">=5.2.0"
+        "naith/naith": "*",
+        "pearplex/PHPExcel": "*"
     },
-    "autoload": {
-        "classmap" : ["php/Craur.class.php"]
+    "config": {
+        "bin-dir":          "bin/"
     }
 }
