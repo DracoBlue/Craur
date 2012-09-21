@@ -17,7 +17,7 @@ test-constant:
 install-composer:
 
 	@if [ ! -d ./bin ]; then mkdir bin; fi
-	@if [ ! -f ./bin/composer.phar ]; then curl -s http://getcomposer.org/installer | php -n -d date.timezone="Europe/Berlin" -- --install-dir=./bin/; fi
+	@if [ ! -f ./bin/composer.phar ]; then curl -s http://getcomposer.org/installer | php -d date.timezone="Europe/Berlin" -- --install-dir=./bin/; fi
 
 install-dependencies:
 
