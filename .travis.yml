@@ -3,5 +3,5 @@ php:
   - 5.2
   - 5.3
   - 5.4
-before_script: "make install-dependencies"
+before_script: "cd php && composer install"
 script: "make test && cat php/junit.xml"
