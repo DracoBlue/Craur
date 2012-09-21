@@ -145,6 +145,39 @@ Will load the first sheet of an excel file and fill the objects according to the
             assert(in_array($author->get('name'), array('Hans', 'Paul', 'Erwin')));
         }
     }  
+    
+### Craur::createFromYamlFile(`$file_path`) : `Craur`
+
+Will create and return a new craur instance for the given YAML file path.
+
+     * If the file loooks like this:
+     * books:
+     * -
+     *   name: My Book
+     *   year: 2012
+     *   authors:
+     *     -
+     *       name: Hans
+     *       age: 32
+     *     -
+     *       name: Paul
+     *       age: 20
+     *  -
+     *    name: My second Book
+     *      authors:
+     *        name: Erwin
+     *        age: 10
+     */
+    $shelf = Craur::createFromYamlFile('fixtures/books.yaml', array());
+    assert(count($shelf->get('books[]')) === 2);
+    foreach ($shelf->get('books[]') as $book)
+    {
+        assert(in_array($book->get('name'), array('My Book', 'My second Book')));
+        foreach ($book->get('authors[]') as $author)
+        {
+            assert(in_array($author->get('name'), array('Hans', 'Paul', 'Erwin')));
+        }
+    }
 
 ### Craur#get(`$path[, $default_value]`) : `Craur`|`mixed` 
 
@@ -368,6 +401,7 @@ element, you can do this:
   - excluded naith into composer.json
   - added composer.json for dependency managment
   - added `Craur::createFromExcelFile($file_path, array $field_mappings)`
+  - added `Craur::createFromYamlFile($file_path)`
 - 1.6.0 (2012/08/07)
   - added html as input_format to craur cli
   - added possibility to load html fragments (breaking change: fragments no longer create html.body stub)

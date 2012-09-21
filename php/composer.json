@@ -20,7 +20,8 @@
     ],
     "require": {
         "naith/naith": "*",
-        "pearplex/PHPExcel": "*"
+        "pearplex/PHPExcel": "*",
+        "symfony/yaml": "*"
     },
     "config": {
         "bin-dir":          "bin/"

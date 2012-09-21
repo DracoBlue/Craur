@@ -66,6 +66,37 @@ foreach ($shelf->get('book[]') as $book)
 }
 
 
+/* Craur#createFromYamlFile */
+
+// If the file loooks like this:
+// * books:
+//   -
+//     name: My Book
+//     year: 2012
+//     authors:
+//       -
+//         name: Hans
+//         age: 32
+//       -
+//         name: Paul
+//         age: 20
+//   -
+//     name: My second Book
+//     authors:
+//       name: Erwin
+//       age: 10
+$shelf = Craur::createFromYamlFile('fixtures/books.yaml', array());
+assert(count($shelf->get('books[]')) === 2);
+foreach ($shelf->get('books[]') as $book)
+{
+    assert(in_array($book->get('name'), array('My Book', 'My second Book')));
+    foreach ($book->get('authors[]') as $author)
+    {
+        assert(in_array($author->get('name'), array('Hans', 'Paul', 'Erwin')));
+    }
+}
+
+
 /* Craur#getValues */
 
 $node = Craur::createFromJson('{"book": {"name": "MyBook", "authors": ["Hans", "Paul"]}}');

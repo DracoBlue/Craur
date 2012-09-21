@@ -281,7 +281,7 @@ class Craur
      * 
      * @return Craur  
      */
-     static function createFromExcelFile($file_path, array $field_mappings)
+    static function createFromExcelFile($file_path, array $field_mappings)
     {
         $file_handle = null;
         
@@ -312,6 +312,54 @@ class Craur
         $merged_entries = CraurCsvReader::mergePathEntriesRecursive($entries);
         
         return new Craur($merged_entries);  
+    }
+
+    /**
+     * Will load the first sheet of an xlsx file and fill the objects according to the given `$field_mappings`.
+     * 
+     * @example
+     *     // If the file loooks like this:
+     *     // * books:
+     *     //   -
+     *     //     name: My Book
+     *     //     year: 2012
+     *     //     authors:
+     *     //       -
+     *     //         name: Hans
+     *     //         age: 32
+     *     //       -
+     *     //         name: Paul
+     *     //         age: 20
+     *     //   -
+     *     //     name: My second Book
+     *     //     authors:
+     *     //       name: Erwin
+     *     //       age: 10
+     *     $shelf = Craur::createFromYamlFile('fixtures/books.yaml', array());
+     *     assert(count($shelf->get('books[]')) === 2);
+     *     foreach ($shelf->get('books[]') as $book)
+     *     {
+     *         assert(in_array($book->get('name'), array('My Book', 'My second Book')));
+     *         foreach ($book->get('authors[]') as $author)
+     *         {
+     *             assert(in_array($author->get('name'), array('Hans', 'Paul', 'Erwin')));
+     *         }
+     *     }
+     * 
+     * @return Craur  
+     */
+    static function createFromYamlFile($file_path)
+    {
+        $file_handle = null;
+        
+        if (!file_exists($file_path))
+        {
+            throw new Exception('Cannot open file at ' . $file_path);
+        }
+        
+        $array = Symfony\Component\Yaml\Yaml::parse($file_path);
+        
+        return new Craur($array);  
     }
 
     public function __construct(array $data)

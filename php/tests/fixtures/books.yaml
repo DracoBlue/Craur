@@ -1,0 +1,16 @@
+books:
+  -
+    name: My Book
+    year: 2012
+    authors:
+      -
+        name: Hans
+        age: 32
+      -
+        name: Paul
+        age: 20
+  -
+    name: My second Book
+    authors:
+      name: Erwin
+      age: 10
