@@ -43,6 +43,29 @@ foreach ($shelf->get('book[]') as $book)
 }
 
 
+/* Craur#createFromExcelFile */
+
+// If the file loooks like this:
+// Book Name;Book Year;Author Name
+// My Book;2012;Hans
+// My Book;2012;Paul
+// My second Book;2010;Erwin
+$shelf = Craur::createFromExcelFile('fixtures/books.xlsx', array(
+    'book[].name',
+    'book[].year',
+    'book[].author[].name',
+));
+assert(count($shelf->get('book[]')) === 2);
+foreach ($shelf->get('book[]') as $book)
+{
+    assert(in_array($book->get('name'), array('My Book', 'My second Book')));
+    foreach ($book->get('author[]') as $author)
+    {
+        assert(in_array($author->get('name'), array('Hans', 'Paul', 'Erwin')));
+    }
+}
+
+
 /* Craur#getValues */
 
 $node = Craur::createFromJson('{"book": {"name": "MyBook", "authors": ["Hans", "Paul"]}}');

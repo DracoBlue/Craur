@@ -120,6 +120,32 @@ Will load the csv file and fill the objects according to the given `$field_mappi
         }
     }  
 
+### Craur::createFromExcelFile(`$file_path, array $field_mappings`) : `Craur`
+
+Will load the first sheet of an excel file and fill the objects according to the given `$field_mappings`.
+
+    /*
+     * If the file loooks like this:
+     * Book Name;Book Year;Author Name
+     * My Book;2012;Hans
+     * My Book;2012;Paul
+     * My second Book;2010;Erwin
+     */
+    $shelf = Craur::createFromExcelFile('fixtures/books.xlsx', array(
+        'book[].name',
+        'book[].year',
+        'book[].author[].name',
+    ));
+    assert(count($shelf->get('book[]')) === 2);
+    foreach ($shelf->get('book[]') as $book)
+    {
+        assert(in_array($book->get('name'), array('My Book', 'My second Book')));
+        foreach ($book->get('author[]') as $author)
+        {
+            assert(in_array($author->get('name'), array('Hans', 'Paul', 'Erwin')));
+        }
+    }  
+
 ### Craur#get(`$path[, $default_value]`) : `Craur`|`mixed` 
 
 Returns the value at a given path in the object. If the given path does not exist and an explicit `$default_value` is set: the `$default_value` will be returned. 
@@ -341,6 +367,7 @@ element, you can do this:
 - 1.7-dev
   - excluded naith into composer.json
   - added composer.json for dependency managment
+  - added `Craur::createFromExcelFile($file_path, array $field_mappings)`
 - 1.6.0 (2012/08/07)
   - added html as input_format to craur cli
   - added possibility to load html fragments (breaking change: fragments no longer create html.body stub)

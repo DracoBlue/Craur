@@ -255,6 +255,65 @@ class Craur
         return $craur;   
     }
 
+    /**
+     * Will load the first sheet of an xlsx file and fill the objects according to the given `$field_mappings`.
+     * 
+     * @example
+     *     // If the file loooks like this:
+     *     // Book Name;Book Year;Author Name
+     *     // My Book;2012;Hans
+     *     // My Book;2012;Paul
+     *     // My second Book;2010;Erwin
+     *     $shelf = Craur::createFromExcelFile('fixtures/books.xlsx', array(
+     *         'book[].name',
+     *         'book[].year',
+     *         'book[].author[].name',
+     *     ));
+     *     assert(count($shelf->get('book[]')) === 2);
+     *     foreach ($shelf->get('book[]') as $book)
+     *     {
+     *         assert(in_array($book->get('name'), array('My Book', 'My second Book')));
+     *         foreach ($book->get('author[]') as $author)
+     *         {
+     *             assert(in_array($author->get('name'), array('Hans', 'Paul', 'Erwin')));
+     *         }
+     *     }
+     * 
+     * @return Craur  
+     */
+     static function createFromExcelFile($file_path, array $field_mappings)
+    {
+        $file_handle = null;
+        
+        if (!file_exists($file_path))
+        {
+            throw new Exception('Cannot open file at ' . $file_path);
+        }
+        
+        $row_number = 0;
+        
+        $current_entry = array();
+        
+        $entries = array();
+
+        $excel_object = PHPExcel_IOFactory::load($file_path);
+        
+        $rows = $excel_object->getActiveSheet()->toArray(null,true,true,true);
+        
+        foreach ($rows as $row_data)
+        {
+            $row_number++;
+            if ($row_number != 1)
+            {
+                $entries[] = CraurCsvReader::expandPathsIntoArray(array_values($row_data), $field_mappings);
+            }
+        }
+        
+        $merged_entries = CraurCsvReader::mergePathEntriesRecursive($entries);
+        
+        return new Craur($merged_entries);  
+    }
+
     public function __construct(array $data)
     {
         $this->data = $data;
