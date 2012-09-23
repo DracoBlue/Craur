@@ -14,7 +14,7 @@ class CraurCsvReader
         
         $entries = array();
         
-        while (($row_data = fgetcsv($file_handle, 23085, ";")) !== FALSE)
+        while (($row_data = fgetcsv($file_handle, 0, ";")) !== FALSE)
         {
             $row_number++;
             if ($row_number != 1)
