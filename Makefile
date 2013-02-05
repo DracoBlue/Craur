@@ -4,7 +4,8 @@ help:
 	@echo "Possible targets:"
 	@echo "  test - build all test suites"
 	@echo "  test-constant - build all test suites, as soon as a file changes"
-	exit 0
+	@echo "  install-dependencies - install composer if necessary and install or update all vendor libraries"
+	@exit 0
 
 test:
 
