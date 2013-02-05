@@ -1,7 +1,7 @@
 # Craur
 
-* Version: 1.7.0
-* Date: 2012/09/22
+* Version: 1.7.1
+* Date: 2013/02/05
 * Build Status: [![Build Status](https://secure.travis-ci.org/DracoBlue/Craur.png?branch=master)](http://travis-ci.org/DracoBlue/Craur), 100% Code Coverage
 
 The library craur has two main purposes:
@@ -397,6 +397,8 @@ element, you can do this:
 
 ## Changelog
 
+- 1.7.1 (2013/02/05)
+  - throw exception on empty xml string (fixes #14)
 - 1.7.0 (2012/09/22)
   - excluded naith into composer.json
   - added composer.json for dependency managment

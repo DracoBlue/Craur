@@ -49,6 +49,12 @@ class Craur
         }
         
         $node = new DOMDocument('1.0', 'utf-8');
+
+        if (empty($xml_string)) 
+        {
+            throw new Exception('Empty xml string');
+        }
+
         $is_loaded = $node->loadXML($xml_string, LIBXML_NOCDATA | LIBXML_NOWARNING | LIBXML_NOERROR);
         
         if (!$is_loaded) 
