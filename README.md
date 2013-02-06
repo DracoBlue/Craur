@@ -1,7 +1,7 @@
 # Craur
 
-* Version: 1.7.1
-* Date: 2013/02/05
+* Version: 1.8.0
+* Date: 2013/xx/xx
 * Build Status: [![Build Status](https://secure.travis-ci.org/DracoBlue/Craur.png?branch=master)](http://travis-ci.org/DracoBlue/Craur), 100% Code Coverage
 
 The library craur has two main purposes:
@@ -62,7 +62,7 @@ successful test must have 100% code coverage.
 
 ### Constant/Continuous Testing
 
-If you have `inotifywait` [linux, apt-get install inotify-tools] or `wait_on` [macosx, port install wait_on] installed, you can use:
+If you have `inotifywait` [linux, apt-get install inotify-tools] or `wait_on` [macosx, `port install wait_on`] installed, you can use:
 
     make test-constant
 
@@ -374,12 +374,12 @@ Example (xml to csv, with field mapping - see `--output_format` for more details
 
 ### Input-Format with `--input_format [json|xml|html|csv|yaml|xlsx|auto]`
 
-Specify the input format. Default is `auto`. You may `--from` as a cli
-argument alias for the input format.
+Specify the input format. Default is `auto`. You may use `--from` as an
+alias for `--input format`.
 
 ### Output-Format with `--output_format [json|xml|csv]`
 
-Specify the output format. You may use `--to` as a commandline argument alias.
+Specify the output format. You may use `--to` as an alias for `--input_format`.
 
 Example (xml to json)
 
@@ -387,7 +387,7 @@ Example (xml to json)
     // output:
     // ... lots of json ...
 
-If you specify the output_format as `csv`, you have to give the field mappings
+If you specify the `output_format` as `csv`, you have to give the field mappings
 as parameter. To get all rel-attributes and href-attributes of the feed's link
 element, you can do this:
 
@@ -403,15 +403,24 @@ commandline switch is `--file` or `-f`. See `--help` message of usage details.
 
 ## Changelog
 
+- 1.8.0 (2013/xx/xx)
+  - refactored CLI script `php/craur`
+  - added multiple commandline options via `getopt-php` vendor lib:
+    - `--from`/`--to`: aliases for `--input_format` and `output_format`
+    - `--file`/`-f`: use given file as input instead of `STDIN`
+    - `--help`/`-h`: display help message with usage details
+    - `--version`/`-v`: display version information
+  - added some validation of specified commandline arguments
+  - display error messages on `STDERR` and exit with shell exit code 1
 - 1.7.1 (2013/02/05)
   - throw exception on empty xml string (fixes #14)
 - 1.7.0 (2012/09/22)
-  - excluded naith into composer.json
-  - added composer.json for dependency managment
+  - excluded naith into `composer.json`
+  - added `composer.json` for dependency managment
   - added `Craur::createFromExcelFile($file_path, array $field_mappings)`
   - added `Craur::createFromYamlFile($file_path)`
 - 1.6.0 (2012/08/07)
-  - added html as input_format to craur cli
+  - added html as `input_format` to craur cli
   - added possibility to load html fragments (breaking change: fragments no longer create html.body stub)
 - 1.5.3 (2012/04/16)
   - added `Craur::createFromHtml($html_string, $encoding = 'utf-8')`
@@ -428,7 +437,7 @@ commandline switch is `--file` or `-f`. See `--help` message of usage details.
   - only add csv values, which are not empty
   - added method to generate csv rows out of an object
   - bundled naith as testing framework (<https://github.com/DracoBlue/naith>)
-  - allow csv field_mapping even with gaps (e.g. feed[] and feed[].entry.categories[] works now)
+  - allow csv field mapping even with gaps (e.g. feed[] and feed[].entry.categories[] works now)
   - fixed import mapping with scalar sub values (e.g. issues[].tag[])
 - 1.4.1 (2012/03/14)
   - added `make test-constant` (watches for file changes with inotifywait on linux
@@ -451,15 +460,19 @@ commandline switch is `--file` or `-f`. See `--help` message of usage details.
   - throw error on invalid json
 - 1.0.0 (2012/03/05)
   - added lots of phpdoc
-  - Makefile uses ./run_tests.sh wrapper, to fail properly if one of the tests fails
+  - Makefile uses `./run_tests.sh` wrapper, to fail properly if one of the tests fails
   - it's now possible to retrieve a value of the first array element
   - Craur#get now also returns associative arrays as new Craur-objects, instead of failing
-  - added bootstrap_for_test.php, so we can properly fail on warnings/assertions
+  - added `bootstrap_for_test.php`, so we can properly fail on warnings/assertions
   - added `Craur#getValues` to return multiple paths at once
   - split up the tests into separate files
   - added Makefile (do `make test` to execute tests)
-  - added default_value for `Craur->get($path, $default_value)`
+  - added default value for `Craur->get($path, $default_value)`
   - initial version 
+
+## Contributors
+
+- Steffen Gransow (<https://github.com/graste>)
 
 ## License
 
