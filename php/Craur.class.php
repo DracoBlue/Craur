@@ -321,7 +321,7 @@ class Craur
     }
 
     /**
-     * Will load the first sheet of an xlsx file and fill the objects according to the given `$field_mappings`.
+     * Will load the yaml file and fill the objects according to the given `$field_mappings`.
      * 
      * @example
      *     // If the file loooks like this:

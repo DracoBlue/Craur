@@ -372,13 +372,14 @@ Example (xml to csv, with field mapping - see `--output_format` for more details
     alternate;http://example.org/
     self;http://example.org/feed.atom
 
-### Input-Format with `--input_format [json|xml|csv|auto]`
+### Input-Format with `--input_format [json|xml|html|csv|yaml|xlsx|auto]`
 
-Specify the input format. Default is auto.
+Specify the input format. Default is `auto`. You may `--from` as a cli
+argument alias for the input format.
 
 ### Output-Format with `--output_format [json|xml|csv]`
 
-Specify the output format.
+Specify the output format. You may use `--to` as a commandline argument alias.
 
 Example (xml to json)
 
@@ -394,6 +395,11 @@ element, you can do this:
     // output:
     alternate;http://example.org/
     self;http://example.org/feed.atom
+
+### Specifying an input file
+
+You may specify an input file to use instead of piping content into craur. The
+commandline switch is `--file` or `-f`. See `--help` message of usage details.
 
 ## Changelog
 

@@ -1,4 +1,11 @@
 {
+    "name": "dracoblue/craur",
+    "type": "library",
+    "description": "Parsing and transforming of XML, HTML, CSV, JSON, YAML and XLSX files to CSV, JSON or XML",
+    "keywords": ["craur", "cli", "xml", "csv", "json", "yaml", "xlsx", "html", "read", "write"],
+    "homepage": "https://github.com/DracoBlue/Craur",
+    "license": "MIT",
+    "version": "1.8.0",
     "repositories": [
         {
             "type": "package",
@@ -16,12 +23,17 @@
             "type": "pear",
             "url": "http://pear.pearplex.net/",
             "vendor-alias": "pearplex"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/graste/getopt-php"
         }
     ],
     "require": {
         "naith/naith": "*",
         "pearplex/PHPExcel": "*",
-        "symfony/yaml": "*"
+        "symfony/yaml": "*",
+        "Ulrichsg/getopt-php": "dev-master"
     },
     "config": {
         "bin-dir":          "bin/"

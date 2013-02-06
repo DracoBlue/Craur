@@ -1,42 +1,106 @@
 #!/usr/bin/env php
 <?php
+mb_internal_encoding("UTF-8");
+ini_set('display_errors', 'stderr');
+ignore_user_abort(true);
+stream_set_blocking(STDIN, 0);
 
-require_once ('Craur.class.php');
+require_once 'Craur.class.php';
+require 'vendor/autoload.php';
 
-$arguments = array_slice($argv, 1);
+use Ulrichsg\Getopt;
 
+/*
+ * This CLI program tries to follow some advice from:
+ * http://www.gnu.org/prep/standards/standards.html#Command_002dLine-Interfaces
+ */
+
+/**
+ * Simple commandline helper class for Craur. Creates a Craur instance from
+ * the given commandline arguments and outputs according to specified output
+ * format.
+ *
+ * Displays errors on STDERR if possible and exits with a shell exit code of 1.
+ */
 class CraurCli
 {
-    protected $options = array(
-        'input_format' => 'auto',
-        'output_format' => 'csv'
-    );
-    
+    /**
+     * @var Array
+     */
     protected $field_mappings = array();
-    
+
     /**
      * @var Craur
      */
     protected $root = null;
-    
-    function __construct($arguments, $input_string)
+
+    /**
+     * Constructs CraurCli instance with supported commandline arguments,
+     * parses the ARGV for actual options and operands and then creates
+     * a Craur instance for the given cli arguments.
+     *
+     * @param string $input_string string piped into program via STDIN
+     */
+    function __construct($input_string)
     {
-        list($options, $this->field_mappings) = $this->getOptionsAndParametersFromArguments($arguments, $this->options);
-  
-        list($this->options['input_format']) = $options['input_format'];
-        list($this->options['output_format']) = $options['output_format'];
-        
-        $this->root = $this->getCraurFromInputString($input_string);
+        try
+        {
+            $this->getopt = new Getopt(
+                array(
+                    array(null, 'from', Getopt::OPTIONAL_ARGUMENT, 'Input format to use. One of: auto|csv|json|xml|html|yaml|xlsx'),
+                    array(null, 'to', Getopt::REQUIRED_ARGUMENT, 'Output format to use. One of: csv|json|xml'),
+                    array(null, 'input_format', Getopt::REQUIRED_ARGUMENT, 'Alias for --from.'),
+                    array(null, 'output_format', Getopt::REQUIRED_ARGUMENT, 'Alias for --to'),
+                    array('f', 'file', Getopt::REQUIRED_ARGUMENT, 'Use given file as input.'),
+                    array('h', 'help', Getopt::NO_ARGUMENT, 'Print help and exit.'),
+                    array('v', 'version', Getopt::NO_ARGUMENT, 'Print version information and exit.')
+                )
+            );
+
+            $this->getopt->parse();
+
+            if ($this->getopt->getOption('help') !== null)
+            {
+                $this->exitWithError($this->getHelpMessage());
+            }
+
+            if ($this->getopt->getOption('version') !== null)
+            {
+                $this->exitWithError($this->getVersionMessage());
+            }
+
+            $this->field_mappings = $this->getopt->getOperands();
+
+            if (empty($input_string) && $this->getopt->getOption('file') === null)
+            {
+                throw new \InvalidArgumentException('Neither input stream nor input filename given. See "--help" for usage details.');
+            }
+
+            $this->root = $this->getCraurFromInputString($input_string);
+        }
+        catch (\Exception $e)
+        {
+            //$this->exitWithError('An error occurred: ' . $e->getMessage() . PHP_EOL . 'Stacktrace:' . PHP_EOL . $e->getTraceAsString());
+            $this->exitWithError($e->getMessage());
+        }
     }
-    
+
+    /**
+     * @param string $input_string input string piped into program
+     *
+     * @return Craur instance created from given input string or file
+     *
+     * @throws \InvalidArgumentException in case of errors
+     */
     protected function getCraurFromInputString($input_string)
     {
-        $input_format = $this->options['input_format'];
-        if ($input_format == 'auto')
+        $input_format = $this->getopt->getOption('from') !== null ? $this->getopt->getOption('from') : $this->getopt->getOption('input_format');
+
+        if ($input_format === null || $input_format === 'auto')
         {
             $trimmed_input_string = trim($input_string);
-            $first_char = substr($trimmed_input_string, 0, 1);
-            $last_char = substr($trimmed_input_string, -1, 1);
+            $first_char = mb_substr($trimmed_input_string, 0, 1);
+            $last_char = mb_substr($trimmed_input_string, -1, 1);
             if ($first_char == '{' && $last_char == '}')
             {
                 $input_format = 'json';
@@ -51,52 +115,80 @@ class CraurCli
             }
             else
             {
-                throw new Exception('Cannot guess the input format, please use "--input_format csv" to specific the input format');
+                throw new \InvalidArgumentException('Cannot guess given input format. Please use "--from [type]" to specify the input format. See "--help" for usage details.');
             }
         }
-        
-        if ($input_format === 'json')
+
+        switch ($input_format)
         {
-            return Craur::createFromJson($input_string);
+            case 'json':
+                return Craur::createFromJson($input_string);
+                break;
+            case 'xml':
+                return Craur::createFromXml($input_string);
+                break;
+            case 'html':
+                return Craur::createFromHtml($input_string);
+                break;
+            case 'yaml':
+                $file_path = $this->getopt->getOption('file');
+                if (!is_readable($file_path))
+                {
+                    throw new \InvalidArgumentException('File "' . $file_path . '" for input format "yaml" is not readable.');
+                }
+                return Craur::createFromYamlFile($file_path, $this->field_mappings);
+                break;
+            case 'xlsx':
+                $file_path = $this->getopt->getOption('file');
+                if (!is_readable($file_path))
+                {
+                    throw new \InvalidArgumentException('File "' . $file_path . '" for input format "xlsx" is not readable.');
+                }
+                return Craur::createFromExcelFile($file_path, $this->field_mappings);
+                break;
+            case 'csv':
+                $file_path = $this->getopt->getOption('file');
+                if ($file_path !== null && !is_readable($file_path))
+                {
+                    throw new \InvalidArgumentException('File "' . $file_path . '" for input format "csv" is not readable.');
+                }
+
+                if (!empty($file_path))
+                {
+                    return Craur::createFromCsvFile($file_path, $this->field_mappings);
+                }
+                else
+                {
+                    $file_handle = tmpfile();
+                    fwrite($file_handle, $input_string);
+                    fseek($file_handle, 0, SEEK_SET);
+                    try
+                    {
+                        $craur = CraurCsvReader::createFromCsvFileHandle($file_handle, $this->field_mappings);
+                        fclose($file_handle);
+                        return $craur;
+                    }
+                    catch (Exception $exception)
+                    {
+                        fclose($file_handle);
+                        throw $exception;
+                    }
+                }
+                break;
+            default:
+                throw new \InvalidArgumentException('Unknown input format. Please specify one of: csv, xml, html, json, yaml or xlsx! See --help for usage details.');
+                break;
         }
-        
-        if ($input_format === 'xml')
-        {
-            return Craur::createFromXml($input_string);
-        }
-        
-        if ($input_format === 'html')
-        {
-            return Craur::createFromHtml($input_string);
-        }
-        
-        if ($input_format === 'csv')
-        {
-            $file_handle = tmpfile();
-            fwrite($file_handle, $input_string);
-            fseek($file_handle, 0, SEEK_SET);
-            
-            try
-            {
-                $craur = CraurCsvReader::createFromCsvFileHandle($file_handle, $this->field_mappings);
-                fclose($file_handle);
-                return $craur;
-            }
-            catch (Exception $exception)
-            {
-                fclose($file_handle);
-                throw $exception;
-            }
-        }
-        
-        throw new Exception('Cannot read this input format, please specify json, xml or auto.');
     }
-    
+
+    /**
+     * Outputs string in specified output_format.
+     */
     public function printResults()
     {
         $current_frontier = array($this->root);
         
-        $output_format = $this->options['output_format'];
+        $output_format = $this->getopt->getOption('to') !== null ? $this->getopt->getOption('to') : $this->getopt->getOption('output_format');
         
         if ($output_format === 'json')
         {
@@ -111,61 +203,99 @@ class CraurCli
             $writer = new CraurCsvWriter($this->root, $this->field_mappings);
             $writer->writeToCsvFileHandle(STDOUT);
         }
+        else
+        {
+            $this->exitWithError('No supported output format specified. Use json, xml or csv. See "--help" for usage details.');
+        }
     }
-    
-    protected function getOptionsAndParametersFromArguments($arguments, array $default_options = array())
+
+    /**
+     * Prints given message and exits the program with exit code 1.
+     *
+     * @param string $message to display on STDERR
+     */
+    protected function exitWithError($message)
     {
-        $parameters = array();
-        $options = array();
-        
-        $next_value_key = null;
-        foreach ($arguments as $argument)
+        $error_message = $message . PHP_EOL;
+
+        if (php_sapi_name() === 'cli' && defined('STDERR'))
         {
-            if (substr($argument, 0, 2) == '--')
-            {
-                $next_value_key = substr($argument, 2);
-            }
-            else
-            {
-                if ($next_value_key !== null)
-                {
-                    if (!array_key_exists($next_value_key, $options))
-                    {
-                        $options[$next_value_key] = array();
-                    }
-                    if (substr($argument, 0, 1) == '"' && substr($argument, -1, 1) == '"')
-                    {
-                        /*
-                         * It's something like "example" (with quotes)
-                         */
-                        $argument = substr($argument, 1, strlen($argument) - 2);
-                    }
-                    $options[$next_value_key][] = $argument;
-                    $next_value_key = null;
-                }
-                else
-                {
-                    $parameters[] = $argument;
-                }
-            }
+            fwrite(STDERR, $error_message);
+            fclose(STDERR);
         }
-        
-        foreach ($default_options as $key => $value)
+        elseif (($stderr = @fopen('php://stderr', 'w+')) !== false)
         {
-            if (!array_key_exists($key, $options))
-            {
-                $options[$key] = array($value);
-            }
+            fwrite($stderr, $error_message);
         }
-        
-        return array($options, $parameters);
+        else
+        {
+            echo $error_message;
+        }
+
+        exit(1);
     }
-}
+
+    /**
+     * @return string Help and usage message with supported cli options.
+     */
+    protected function getHelpMessage()
+    {
+        $help_text = $this->getopt->getHelpText(30);
+        $help_text .= <<<END_OF_HELP
+
+Usage examples:
+
+  XML to JSON:
+    $ cat php/tests/fixtures/example_atom_feed.xml | php/craur --to json
+
+  XML to CSV with field mappings:
+    $ cat php/tests/fixtures/example_atom_feed.xml | php/craur --to csv -- feed.link[].@rel feed.link[].@href
+    alternate;http://example.org/
+    self;http://example.org/feed.atom
+
+  EXCEL file to CSV with field mappings:
+    $ php/craur -f php/tests/fixtures/books.xlsx --from xlsx --to csv books[].name
+    "My Book"
+    "My second Book"
+
+  CSV file to JSON with field mappings:
+    $ php/craur -f php/tests/fixtures/books_with_categories.csv --from csv --to json books.name
+    [{"books.name":"My Book"},{"books.name":"My second Book"}]
+
+You may use '--' to signify the end of options and the start of field mappings.
+
+Please note: Not all formats are convertible into each other and not all output formats support field mappings.
+
+Report issues to: <https://github.com/DracoBlue/Craur/issues>
+Program homepage: <https://github.com/DracoBlue/Craur>
+
+END_OF_HELP;
+
+        return $help_text;
+    }
+
+    /**
+     * @return string Version information.
+     */
+    protected function getVersionMessage()
+    {
+        return <<<VERSIONINFO
+Craur 1.0.8
+Copyright (C) 2012-2013 DracoBlue
+License MIT: <http://opensource.org/licenses/MIT>
+
+VERSIONINFO;
+    }
+
+} // CraurCli
+
 
 $input_string = '';
-while ($input_string_part = fgets(STDIN)) {
+while ($input_string_part = fgets(STDIN))
+{
     $input_string .= $input_string_part;
 }
-$cli = new CraurCli($arguments, $input_string);
-$cli->printResults();
 
+$cli_craur = new CraurCli($input_string);
+$cli_craur->printResults();
+exit(0);
