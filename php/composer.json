@@ -24,6 +24,6 @@
         "symfony/yaml": "*"
     },
     "config": {
-        "bin-dir":          "bin/"
+        "bin-dir": "bin/"
     }
 }
