@@ -1,7 +1,7 @@
 # Craur
 
-* Version: 1.7.1
-* Date: 2013/02/05
+* Version: 1.7.2
+* Date: 2013/06/10
 * Build Status: [![Build Status](https://secure.travis-ci.org/DracoBlue/Craur.png?branch=master)](http://travis-ci.org/DracoBlue/Craur), 100% Code Coverage
 
 The library craur has two main purposes:
@@ -397,6 +397,12 @@ element, you can do this:
 
 ## Changelog
 
+- 1.7.2 (2013/06/10)
+  - added composer package information
+  - moved files from php/ to src/
+  - moved tests from php/tests to tests/
+  - moved craur from php/craur to bin/craur
+  - renamed from .class.php to .php
 - 1.7.1 (2013/02/05)
   - throw exception on empty xml string (fixes #14)
 - 1.7.0 (2012/09/22)

@@ -1,7 +1,7 @@
 <?php
 
-require_once (dirname(__FILE__) . '/CraurCsvWriter.class.php');
-require_once (dirname(__FILE__) . '/CraurCsvReader.class.php');
+require_once (dirname(__FILE__) . '/CraurCsvWriter.php');
+require_once (dirname(__FILE__) . '/CraurCsvReader.php');
 
 class Craur
 {

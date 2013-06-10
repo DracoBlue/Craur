@@ -5,7 +5,7 @@
  * Usage: php php/generate_test_from_phpdoc_of_classes.php > php/tests/php_doc_snippet_test.php 
  */
 
-require_once(dirname(__FILE__) . '/Craur.class.php');
+require_once(dirname(__FILE__) . '/Craur.php');
 
 $result = array();
 

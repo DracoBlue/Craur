@@ -9,21 +9,20 @@ help:
 
 test:
 
-	@cd php && vendor/naith/naith/naith run
+	@vendor/dracoblue/naith/naith run
 
 test-constant:
 
-	@cd php && vendor/naith/naith/naith run-constant
+	@vendor/dracoblue/naith/naith run-constant
 
 install-composer:
 
-	@if [ ! -d ./bin ]; then mkdir bin; fi
 	@if [ ! -f ./bin/composer.phar ]; then curl -s http://getcomposer.org/installer | php -d date.timezone="Europe/Berlin" -- --install-dir=./bin/; fi
 
 install-dependencies:
 
 	@make install-composer
-	@cd php && php -d date.timezone="Europe/Berlin" ./../bin/composer.phar -- update
+	@php -d date.timezone="Europe/Berlin" ./bin/composer.phar -- update
 	
 .PHONY: test help
 
