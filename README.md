@@ -1,6 +1,6 @@
 # Craur
 
-* Version: 1.7.2
+* Version: 1.7.3
 * Date: 2013/06/10
 * Build Status: [![Build Status](https://secure.travis-ci.org/DracoBlue/Craur.png?branch=master)](http://travis-ci.org/DracoBlue/Craur), 100% Code Coverage
 
@@ -397,6 +397,8 @@ element, you can do this:
 
 ## Changelog
 
+- 1.7.2 (2013/06/10)
+  - use composer package for phpexcel instead of custom pearplex repository
 - 1.7.2 (2013/06/10)
   - added composer package information
   - moved files from php/ to src/

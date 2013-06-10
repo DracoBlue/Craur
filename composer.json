@@ -15,16 +15,9 @@
     "autoload": {
         "classmap": [ "src/" ]
     },
-    "repositories": [
-        {
-            "type": "pear",
-            "url": "http://pear.pearplex.net/",
-            "vendor-alias": "pearplex"
-        }
-    ],
     "require": {
         "dracoblue/naith": "1.1.*",
-        "pearplex/PHPExcel": "*",
+        "codeplex/phpexcel": "*",
         "symfony/yaml": "*"
     },
     "config": {
