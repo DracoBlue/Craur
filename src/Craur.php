@@ -198,7 +198,7 @@ class Craur
         {
             $value = implode('', $values);
 
-            if (trim($value))
+            if (trim($value) != '')
             {
                 if (empty($data))
                 {
@@ -210,7 +210,7 @@ class Craur
                 }
             }
         }
-
+        
         return $data;
     }
 
@@ -731,7 +731,7 @@ class Craur
             {
                 try 
                 {
-                    $value = $filter($value_without_filter);
+                    $value = call_user_func_array($filter, array($value_without_filter));
                     if (!$return_multiple)
                     {
                         return $value;

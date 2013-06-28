@@ -1,7 +1,7 @@
 # Craur
 
-* Version: 1.7.3
-* Date: 2013/06/10
+* Version: 1.7.4
+* Date: 2013/06/28
 * Build Status: [![Build Status](https://secure.travis-ci.org/DracoBlue/Craur.png?branch=master)](http://travis-ci.org/DracoBlue/Craur), 100% Code Coverage
 
 The library craur has two main purposes:
@@ -397,7 +397,10 @@ element, you can do this:
 
 ## Changelog
 
-- 1.7.2 (2013/06/10)
+- 1.7.4 (2013/06/28)
+  - xml with 0 as value, did not work
+  - calling a class did not work as filter
+- 1.7.3 (2013/06/10)
   - use composer package for phpexcel instead of custom pearplex repository
 - 1.7.2 (2013/06/10)
   - added composer package information
