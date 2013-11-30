@@ -368,11 +368,145 @@ class Craur
         return new Craur($array);  
     }
 
+    /**
+     * Will load all tables from a specific pdo source by dsn.
+     *
+     * @return Craur
+     */
+    static function createFromPdo($dsn, array $options = array())
+    {
+        $attributes = array();
+        $driver_options = array();
+        $user = null;
+        $password = null;
+
+        if (isset($options['user']))
+        {
+            $user = $options['user'];
+        }
+
+        if (isset($options['password']))
+        {
+            $password = $options['password'];
+        }
+
+        if (isset($options['driver_options']))
+        {
+            $driver_options = $options['driver_options'];
+        }
+
+        if (isset($options['attributes']))
+        {
+            $attributes = $options['attributes'];
+        }
+
+        if (!isset($attributes[PDO::ATTR_ERRMODE]))
+        {
+            $attributes[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
+        }
+
+        if (!isset($driver_options[PDO::MYSQL_ATTR_INIT_COMMAND]))
+        {
+            $attributes[PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET NAMES utf8';
+        }
+
+        $pdo = new PDO($dsn, $user, $password, $driver_options);
+
+        foreach ($attributes as $key => $value)
+        {
+            $pdo->setAttribute($key, $value);
+        }
+
+        $schema_name = null;
+
+        try
+        {
+            $schema_statement = $pdo->prepare('SELECT current_schema()');
+            $schema_statement->execute();
+            $schema = $schema_statement->fetch(PDO::FETCH_NUM);
+            if ($schema)
+            {
+                $schema_name = $schema[0];
+            }
+        }
+        catch (PDOException $exception)
+        {
+        }
+
+        try
+        {
+            $schema_statement = $pdo->prepare('SELECT schema()');
+            $schema_statement->execute();
+            $schema = $schema_statement->fetch(PDO::FETCH_NUM);
+            if ($schema)
+            {
+                $schema_name = $schema[0];
+            }
+        }
+        catch (PDOException $exception)
+        {
+        }
+
+        if (!$schema_name)
+        {
+            throw new Exception('Cannot retrieve schema/database name from pdo connection!');
+        }
+
+        $tables_statement = $pdo->prepare('select DISTINCT table_name from INFORMATION_SCHEMA.COLUMNS where table_schema = ?;');
+        $tables_statement->execute(array($schema_name));
+
+        $tables = array();
+
+        foreach ($tables_statement->fetchAll(PDO::FETCH_NUM) as $row)
+        {
+            $tables[] = $row[0];
+        }
+
+#        var_dump($tables);die();
+
+        $array = array();
+
+        foreach ($tables as $table_name)
+        {
+            $array[$table_name] = array(
+            );
+
+//            $columns_statement = $pdo->prepare('select * from INFORMATION_SCHEMA.COLUMNS where table_name = ? AND table_schema = ?;');
+//            $columns_statement->execute(array($table_name, $schema_name));
+//
+//            foreach ($columns_statement->fetchAll(PDO::FETCH_ASSOC) as $row)
+//            {
+//                $column = array();
+//
+//                foreach ($row as $key => $value)
+//                {
+//                    $column[strtolower($key)] = $value;
+//                }
+//
+//                $array[$table_name]['columns'][] = $column;
+//            }
+
+#            var_dump($array[$table_name]['columns']);
+
+#            die();
+
+            $rows_statement = $pdo->prepare('SELECT * FROM ' . $table_name);
+            $rows_statement->execute();
+
+            foreach ($rows_statement->fetchAll(PDO::FETCH_ASSOC) as $row)
+            {
+                $array[$table_name][] = $row;
+            }
+        }
+
+        return new Craur($array);
+    }
+
     public function __construct(array $data)
     {
         $this->data = $data;
     }
-    
+
     /**
      * Return multiple values at once. If a given path is not set, one can use
      * the `$default_values` array to specify a default. If a path is not set
@@ -762,6 +896,29 @@ class Craur
             }
             throw new Exception('Path not found!');
         }
+    }
+
+    public function toMysqlStatements()
+    {
+        $sql = array();
+
+        foreach ($this->data as $table_name => $rows)
+        {
+            foreach ($rows as $row)
+            {
+                $values = array();
+                $keys = array();
+                foreach ($row as $key => $value)
+                {
+                    $keys[] = '`' . $key . '`';
+                    $values[] = '\'' . str_replace(array('\\', "\0", "\n", "\r", "'", '"', "\x1a"), array('\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'), $value) . '\'';
+                }
+
+                $sql[] = 'INSERT INTO `' . $table_name . '` (' . implode(',', $keys) . ') VALUES (' . implode(',', $values) . ')';
+            }
+        }
+
+        return implode(';' . PHP_EOL, $sql);
     }
 
     public function __toString()
