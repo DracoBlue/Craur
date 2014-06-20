@@ -240,7 +240,7 @@ class Craur
      * 
      * @return Craur  
      */
-    static function createFromCsvFile($file_path, array $field_mappings)
+    static function createFromCsvFile($file_path, array $field_mappings, $delimiter = ';')
     {
         $file_handle = null;
         
@@ -254,7 +254,7 @@ class Craur
             throw new Exception('Cannot open file at ' . $file_path);
         }
         
-        $craur = CraurCsvReader::createFromCsvFileHandle($file_handle, $field_mappings);
+        $craur = CraurCsvReader::createFromCsvFileHandle($file_handle, $field_mappings, $delimiter);
         
         fclose($file_handle);
         
@@ -940,7 +940,7 @@ class Craur
      * 
      * @return void
      */
-    public function saveToCsvFile($csv_file_path, array $field_mappings)
+    public function saveToCsvFile($csv_file_path, array $field_mappings, $delimiter = ';')
     {
         /*
          * Clean the file
@@ -948,9 +948,9 @@ class Craur
         file_put_contents($csv_file_path, '');
         $file_handle = fopen($csv_file_path, 'w');
         
-        fputcsv($file_handle, $field_mappings, ';');
+        fputcsv($file_handle, $field_mappings, $delimiter);
         
-        $writer = new CraurCsvWriter($this, $field_mappings);
+        $writer = new CraurCsvWriter($this, $field_mappings, $delimiter);
         $writer->writeToCsvFileHandle($file_handle);
         
         fclose($file_handle);

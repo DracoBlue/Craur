@@ -6,7 +6,7 @@ class CraurCsvReader
     /**
      * Internal method to create a craur object from a given file handle (e.g. STDIN)
      */
-    static function createFromCsvFileHandle($file_handle, array $field_mappings)
+    static function createFromCsvFileHandle($file_handle, array $field_mappings, $delimiter = ';')
     {
         $row_number = 0;
         
@@ -14,7 +14,7 @@ class CraurCsvReader
         
         $entries = array();
         
-        while (($row_data = fgetcsv($file_handle, 0, ";")) !== FALSE)
+        while (($row_data = fgetcsv($file_handle, 0, $delimiter)) !== FALSE)
         {
             $row_number++;
             if ($row_number != 1)
