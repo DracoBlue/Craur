@@ -1,7 +1,6 @@
 # Craur
 
-* Version: 1.7.4
-* Date: 2013/06/28
+* Latest Release: [![GitHub version](https://badge.fury.io/gh/DracoBlue%2FCraur.png)](https://github.com/DracoBlue/Craur/releases)
 * Build Status: [![Build Status](https://secure.travis-ci.org/DracoBlue/Craur.png?branch=master)](http://travis-ci.org/DracoBlue/Craur), 100% Code Coverage
 
 The library craur has two main purposes:
