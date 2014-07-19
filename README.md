@@ -396,7 +396,7 @@ element, you can do this:
 
 ## Changelog
 
-- dev
+- 1.8.0 (2014/07/19)
   - added support for html5 tags (by simply ignoring every unexpected tag) #24
 - 1.7.4 (2013/06/28)
   - xml with 0 as value, did not work
