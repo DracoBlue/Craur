@@ -396,6 +396,8 @@ element, you can do this:
 
 ## Changelog
 
+- dev
+  - added support for html5 tags (by simply ignoring every unexpected tag) #24
 - 1.7.4 (2013/06/28)
   - xml with 0 as value, did not work
   - calling a class did not work as filter

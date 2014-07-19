@@ -117,12 +117,20 @@ class Craur
          */
         libxml_use_internal_errors(true);
         $node->loadHTML($html_string);
-        $error = libxml_get_last_error();
-        libxml_use_internal_errors(false);        
-        
-        if ($error) 
+        $errors = libxml_get_errors();
+        libxml_use_internal_errors(false);
+
+
+        if (!empty($errors))
         {
-            throw new Exception('Invalid html (' . trim($error->message) . ', line: ' . $error->line . ', col: ' . $error->column . '): ' . $html_string);
+            foreach ($errors as $error)
+            {
+                /* XML_HTML_UNKNOWN_TAG = 801 */
+                if ($error->code != 801)
+                {
+                    throw new Exception('Invalid html (' . trim($error->message) . ', line: ' . $error->line . ', col: ' . $error->column . '): ' . $html_string);
+                }
+            }
         }
         
         $data = self::convertDomNodeToDataArray($node);
