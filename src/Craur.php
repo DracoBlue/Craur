@@ -379,6 +379,7 @@ class Craur
         $driver_options = array();
         $user = null;
         $password = null;
+        $tables = array();
 
         if (isset($options['user']))
         {
@@ -417,49 +418,56 @@ class Craur
             $pdo->setAttribute($key, $value);
         }
 
-        $schema_name = null;
-
-        try
+        if (!isset($options['tables']))
         {
-            $schema_statement = $pdo->prepare('SELECT current_schema()');
-            $schema_statement->execute();
-            $schema = $schema_statement->fetch(PDO::FETCH_NUM);
-            if ($schema)
+            $schema_name = null;
+
+            try
             {
-                $schema_name = $schema[0];
+                $schema_statement = $pdo->prepare('SELECT current_schema()');
+                $schema_statement->execute();
+                $schema = $schema_statement->fetch(PDO::FETCH_NUM);
+                if ($schema)
+                {
+                    $schema_name = $schema[0];
+                }
+            }
+            catch (PDOException $exception)
+            {
+            }
+
+            try
+            {
+                $schema_statement = $pdo->prepare('SELECT schema()');
+                $schema_statement->execute();
+                $schema = $schema_statement->fetch(PDO::FETCH_NUM);
+                if ($schema)
+                {
+                    $schema_name = $schema[0];
+                }
+            }
+            catch (PDOException $exception)
+            {
+            }
+
+            if (!$schema_name)
+            {
+                throw new Exception('Cannot retrieve schema/database name from pdo connection!');
+            }
+
+            $tables_statement = $pdo->prepare('select DISTINCT table_name from INFORMATION_SCHEMA.COLUMNS where table_schema = ?;');
+            $tables_statement->execute(array($schema_name));
+
+            $tables = array();
+
+            foreach ($tables_statement->fetchAll(PDO::FETCH_NUM) as $row)
+            {
+                $tables[] = $row[0];
             }
         }
-        catch (PDOException $exception)
+        else
         {
-        }
-
-        try
-        {
-            $schema_statement = $pdo->prepare('SELECT schema()');
-            $schema_statement->execute();
-            $schema = $schema_statement->fetch(PDO::FETCH_NUM);
-            if ($schema)
-            {
-                $schema_name = $schema[0];
-            }
-        }
-        catch (PDOException $exception)
-        {
-        }
-
-        if (!$schema_name)
-        {
-            throw new Exception('Cannot retrieve schema/database name from pdo connection!');
-        }
-
-        $tables_statement = $pdo->prepare('select DISTINCT table_name from INFORMATION_SCHEMA.COLUMNS where table_schema = ?;');
-        $tables_statement->execute(array($schema_name));
-
-        $tables = array();
-
-        foreach ($tables_statement->fetchAll(PDO::FETCH_NUM) as $row)
-        {
-            $tables[] = $row[0];
+            $tables = $options['tables'];
         }
 
 #        var_dump($tables);die();
