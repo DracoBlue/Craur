@@ -396,6 +396,8 @@ element, you can do this:
 
 ## Changelog
 
+- 1.8.2 (2015/03/17)
+  - downgrade to phpexcel `1.7.8` (instead of 1.8.0)
 - 1.8.1 (2015/03/17)
   - switched to `phpoffice/phpexcel` since `codeplex/phpexcel` is deprecated
 - 1.8.0 (2014/07/19)
