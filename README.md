@@ -396,6 +396,8 @@ element, you can do this:
 
 ## Changelog
 
+- 1.8.1 (2015/03/17)
+  - switched to `phpoffice/phpexcel` since `codeplex/phpexcel` is deprecated
 - 1.8.0 (2014/07/19)
   - added support for html5 tags (by simply ignoring every unexpected tag) #24
 - 1.7.4 (2013/06/28)
