@@ -396,6 +396,8 @@ element, you can do this:
 
 ## Changelog
 
+- 2.0.0 (2015/04/28)
+  - BC: `__toString` returns empty string if the xml tag has only attributes) - was throwing a fatal error earlier
 - 1.8.2 (2015/03/17)
   - downgrade to phpexcel `1.7.8` (instead of 1.8.0)
 - 1.8.1 (2015/03/17)

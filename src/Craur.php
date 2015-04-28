@@ -774,13 +774,12 @@ class Craur
 
     public function __toString()
     {
-
-        if (isset($this->data['@']))
+        if (array_key_exists('@', $this->data))
         {
             return $this->data['@'];
         }
 
-        throw new Exception('Cannot convert to string, since value is missing!');
+        return '';
     }
 
     /**
