@@ -2,5 +2,8 @@ language: php
 php:
   - 5.3
   - 5.4
+  - 5.5
+  - 5.6
+  - 7.0
 before_script: "make install-dependencies"
 script: "make test && cat junit.xml"
