@@ -396,6 +396,8 @@ element, you can do this:
 
 ## Changelog
 
+- 2.0.1 (2016/06/28)
+  - added compatibility to symfony/yaml 3.x
 - 2.0.0 (2015/04/28)
   - BC: `__toString` returns empty string if the xml tag has only attributes) - was throwing a fatal error earlier
 - 1.8.2 (2015/03/17)

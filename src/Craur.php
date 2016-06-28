@@ -371,8 +371,8 @@ class Craur
             throw new Exception('Cannot open file at ' . $file_path);
         }
         
-        $array = Symfony\Component\Yaml\Yaml::parse($file_path);
-        
+        $array = Symfony\Component\Yaml\Yaml::parse(file_get_contents($file_path));
+
         return new Craur($array);  
     }
 
