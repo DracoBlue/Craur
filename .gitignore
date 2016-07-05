@@ -1,3 +1,5 @@
 php/vendor
 php/composer.lock
 bin
+/vendor
+/composer.lock
