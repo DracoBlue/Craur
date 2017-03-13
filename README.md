@@ -191,6 +191,20 @@ Returns the value at a given path in the object. If the given path does not exis
     $authors = $node->get('book.authors[]');
     assert(count($authors) == 2);
 
+As of 2.1.0 it is possible to escape a dot (e.g. if the key contains a dot) in the path parameter by using a `\` (backslash) before the dot.
+
+    $node = Craur::createFromJson('{"http://example.org": {"name": "Example Site"}}');
+
+    $book = $node->get('http://example\.org');
+    assert($book->get('name') == 'MyBook');
+
+If you need to escape also the `\`, use `\`, too.
+
+	$node = Craur::createFromJson('{"http://example\\\\.org": {"name": "Example Site"}}');
+
+	$book = $node->get('http://example\\\\\\.org');
+	assert($book->get('name') == 'Example Site');
+
 ### Craur#getWithFilter(`$path, $filter[, $default_value]`) : `Craur`|`mixed` 
 
 Works similar to `Craur#get`, but can use a callable as filter object. Before returning the value, the function evaluates `$filter($value)` and returns this instead.
@@ -396,6 +410,8 @@ element, you can do this:
 
 ## Changelog
 
+- dev
+  - added `\` to escape dots in path
 - 2.0.1 (2016/06/28)
   - added compatibility to symfony/yaml 3.x
 - 2.0.0 (2015/04/28)

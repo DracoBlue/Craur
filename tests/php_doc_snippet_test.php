@@ -141,6 +141,13 @@ assert($values['book_price'] == '20');
 assert($values['first_author'] == 'HANS');
 
 
+/* Craur#unescapePath */
+
+assert("hans hans2" == implode(' ', Craur::unescapePath("hans.hans2")));
+assert("hans.hans2" == implode(' ', Craur::unescapePath("hans\\.hans2")));
+assert("hans\\ hans2" == implode(' ', Craur::unescapePath("hans\\\\.hans2")));
+
+
 /* Craur#get */
 
 $node = Craur::createFromJson('{"book": {"name": "MyBook", "authors": ["Hans", "Paul"]}}');

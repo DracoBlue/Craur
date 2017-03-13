@@ -536,6 +536,64 @@ class Craur
         
         return $values;   
     }
+
+    /**
+     * Returns an unescaped version of the given path as array.
+     *
+     * @param {String} $escapedPath
+     *
+     * @example
+     *     assert("hans hans2" == implode(' ', Craur::unescapePath("hans.hans2")));
+     *     assert("hans.hans2" == implode(' ', Craur::unescapePath("hans\\.hans2")));
+     *     assert("hans\\ hans2" == implode(' ', Craur::unescapePath("hans\\\\.hans2")));
+     *
+     * @return array
+     */
+    static public function unescapePath($escapedPath) {
+        $path = array();
+        $lastPartEscapedTheDot = false;
+
+        foreach (explode('.', $escapedPath) as $escapedPart) {
+            $nextPartEscapedTheDot = false;
+            $currentPart = $escapedPart;
+
+            if (strpos($escapedPart, '\\') !== false) {
+                $currentPart = '';
+                $isInEscapeSequence = false;
+
+                foreach (explode('\\', $escapedPart) as $pos => $explodedBackslashPart) {
+                    if ($explodedBackslashPart === "") {
+                        if ($isInEscapeSequence) {
+                            $isInEscapeSequence = false;
+                            $currentPart .= '\\';
+                        } else {
+                            $isInEscapeSequence = true;
+                        }
+                    } else {
+                        if ($pos > 0) {
+                            $currentPart .= '\\';
+                        }
+                        $currentPart .= $explodedBackslashPart;
+                        $isInEscapeSequence = false;
+                    }
+                }
+
+                if ($isInEscapeSequence) {
+                    $nextPartEscapedTheDot = true;
+                }
+            }
+
+
+            if ($lastPartEscapedTheDot) {
+                $path[count($path) - 1] .= '.' . $currentPart;
+            } else {
+                $path[] = $currentPart;
+            }
+            $lastPartEscapedTheDot = $nextPartEscapedTheDot;
+        }
+
+        return $path;
+    }
         
     /**
      * Returns the value at a given path in the object. If the given path does
@@ -572,7 +630,7 @@ class Craur
         /*
          * 1. Find the data for the path
          */
-        foreach (explode('.', $path) as $part)
+        foreach (self::unescapePath($path) as $part)
         {
             if (is_array($current_node) && !isset($current_node[$part]) && isset($current_node[0]))
             {
