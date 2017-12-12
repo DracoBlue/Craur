@@ -410,6 +410,8 @@ element, you can do this:
 
 ## Changelog
 
+- 2.1.1 (2017/12/12)
+  - added compatibility to symfony/yaml 4.x
 - 2.1.0 (2017/03/13)
   - added `\` to escape dots in path
 - 2.0.1 (2016/06/28)
