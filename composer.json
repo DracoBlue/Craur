@@ -11,8 +11,8 @@
     ],
     "require": {
         "php": ">=5.3.0",
-        "dracoblue/naith": "1.1.*",
-        "phpoffice/phpexcel": "1.7.*",
+        "dracoblue/naith": "^1.1",
+        "phpoffice/phpexcel": "^1.7",
         "symfony/yaml": "^2.0 || ^3.0 || ^4.0"
     },
     "autoload": {
