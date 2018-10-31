@@ -65,7 +65,7 @@ class Craur
         $data = self::convertDomNodeToDataArray($node);
 
         if ($data === null) {
-            $data = [];
+            $data = array();
         }
 
         $xpath = new DOMXPath($node);
@@ -138,6 +138,10 @@ class Craur
         }
         
         $data = self::convertDomNodeToDataArray($node);
+
+        if ($data === null) {
+            $data = array();
+        }
         
         if ($is_just_a_fragment)
         {
