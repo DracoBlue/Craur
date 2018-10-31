@@ -64,6 +64,10 @@ class Craur
 
         $data = self::convertDomNodeToDataArray($node);
 
+        if ($data === null) {
+            $data = [];
+        }
+
         $xpath = new DOMXPath($node);
         $root_node_name = $node->documentElement->nodeName;
         $namespaces = array();
@@ -225,7 +229,7 @@ class Craur
             }
         }
 
-        if (count($data) === 0) {
+        if (is_array($data) && count($data) === 0) {
             return null;
         }
 
