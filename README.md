@@ -410,6 +410,8 @@ element, you can do this:
 
 ## Changelog
 
+- 3.0.0 (2018/10/31)
+  - hide empty xml tags from json representation
 - 2.1.1 (2017/12/12)
   - added compatibility to symfony/yaml 4.x
 - 2.1.0 (2017/03/13)

@@ -64,6 +64,10 @@ class Craur
 
         $data = self::convertDomNodeToDataArray($node);
 
+        if ($data === null) {
+            $data = array();
+        }
+
         $xpath = new DOMXPath($node);
         $root_node_name = $node->documentElement->nodeName;
         $namespaces = array();
@@ -134,6 +138,10 @@ class Craur
         }
         
         $data = self::convertDomNodeToDataArray($node);
+
+        if ($data === null) {
+            $data = array();
+        }
         
         if ($is_just_a_fragment)
         {
@@ -183,11 +191,17 @@ class Craur
                         {
                             $data[$key] = array($data[$key]);
                         }
-                        $data[$key][] = self::convertDomNodeToDataArray($child_node);
+                        $value = self::convertDomNodeToDataArray($child_node);
+                        if ($value !== null) {
+                            $data[$key][] = $value;
+                        }
                     }
                     else
                     {
-                        $data[$key] = self::convertDomNodeToDataArray($child_node);
+                        $value = self::convertDomNodeToDataArray($child_node);
+                        if ($value !== null) {
+                            $data[$key] = $value;
+                        }
                     }
                 }
             }
@@ -218,7 +232,11 @@ class Craur
                 }
             }
         }
-        
+
+        if (is_array($data) && count($data) === 0) {
+            return null;
+        }
+
         return $data;
     }
 
