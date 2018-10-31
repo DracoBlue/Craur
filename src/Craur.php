@@ -183,11 +183,17 @@ class Craur
                         {
                             $data[$key] = array($data[$key]);
                         }
-                        $data[$key][] = self::convertDomNodeToDataArray($child_node);
+                        $value = self::convertDomNodeToDataArray($child_node);
+                        if ($value !== null) {
+                            $data[$key][] = $value;
+                        }
                     }
                     else
                     {
-                        $data[$key] = self::convertDomNodeToDataArray($child_node);
+                        $value = self::convertDomNodeToDataArray($child_node);
+                        if ($value !== null) {
+                            $data[$key] = $value;
+                        }
                     }
                 }
             }
@@ -218,7 +224,11 @@ class Craur
                 }
             }
         }
-        
+
+        if (count($data) === 0) {
+            return null;
+        }
+
         return $data;
     }
 
