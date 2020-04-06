@@ -1,5 +1,7 @@
 <?php
 
+use PhpOffice\PhpSpreadsheet\IOFactory;
+
 require_once (dirname(__FILE__) . '/CraurCsvWriter.php');
 require_once (dirname(__FILE__) . '/CraurCsvReader.php');
 
@@ -305,15 +307,11 @@ class Craur
         }
         
         $row_number = 0;
-        
-        $current_entry = array();
-        
+
         $entries = array();
 
-        $excel_object = PHPExcel_IOFactory::load($file_path);
-        
-        $rows = $excel_object->getActiveSheet()->toArray(null,true,true,true);
-        
+        $rows = IOFactory::load($file_path)->getActiveSheet()->toArray(null,true,true,true);
+
         foreach ($rows as $row_data)
         {
             $row_number++;
