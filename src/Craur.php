@@ -292,7 +292,9 @@ class Craur
      *             assert(in_array($author->get('name'), array('Hans', 'Paul', 'Erwin')));
      *         }
      *     }
-     * 
+     *
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     *
      * @return Craur  
      */
     static function createFromExcelFile($file_path, array $field_mappings)
@@ -310,7 +312,8 @@ class Craur
         
         $entries = array();
 
-        $excel_object = PHPExcel_IOFactory::load($file_path);
+        $excel_type = \PhpOffice\PhpSpreadsheet\IOFactory::identify($file_path);
+        $excel_object = \PhpOffice\PhpSpreadsheet\IOFactory::createReader($excel_type)->load($file_path);
         
         $rows = $excel_object->getActiveSheet()->toArray(null,true,true,true);
         

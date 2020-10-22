@@ -410,6 +410,10 @@ element, you can do this:
 
 ## Changelog
 
+- 3.0.0 (2020/10/22)
+  - moved `dracoblue/naith` as a dev dependency
+  - dropped `phpoffice/phpexcel` for `phpoffice/phpspreadsheet` instead
+  - dropped support for `PHP 5`, `PHP 7.0` and `PHP 7.1`
 - 2.1.1 (2017/12/12)
   - added compatibility to symfony/yaml 4.x
 - 2.1.0 (2017/03/13)
