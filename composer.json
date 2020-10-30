@@ -10,10 +10,12 @@
         }
     ],
     "require": {
-        "php": ">=5.3.0",
-        "dracoblue/naith": "^1.1",
-        "phpoffice/phpexcel": "^1.7",
+        "php": "^7.2",
+        "phpoffice/phpspreadsheet": "^1.12",
         "symfony/yaml": "^2.0 || ^3.0 || ^4.0"
+    },
+    "require-dev": {
+        "dracoblue/naith": "^1.1"
     },
     "autoload": {
         "classmap": [ "src/" ]
