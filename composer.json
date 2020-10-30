@@ -1,6 +1,6 @@
 {
     "name": "dracoblue/craur",
-    "description": "A loose xml to json and json to xml converter (and csv/xlsx/yaml). Writing PHP Json/Xml/Csv/Yaml/excel Importers made easy",
+    "description": "A lossless xml to json and json to xml converter (and csv/xlsx/yaml). Writing PHP Json/Xml/Csv/Yaml/excel Importers made easy",
     "keywords": [ "importer", "exporter", "dom", "xml", "json", "csv", "yaml", "excel" ],
     "license": "MIT",
     "authors": [
