@@ -294,7 +294,9 @@ class Craur
      *             assert(in_array($author->get('name'), array('Hans', 'Paul', 'Erwin')));
      *         }
      *     }
-     * 
+     *
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     *
      * @return Craur  
      */
     static function createFromExcelFile($file_path, array $field_mappings)
