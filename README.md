@@ -389,11 +389,11 @@ Example (xml to csv, with field mapping - see `--output_format` for more details
 
 Specify the input format. Default is auto.
 
-For the input format `csv` you can the change the delimiter by passing the option `--csv_output_delimiter`
+For the input format `csv` you can the change the delimiter by passing the option `--csv_input_delimiter`
 
 Example with `--csv_input_delimiter`
 
-    $ cat php/tests/fixtures/example_atom_feed.xml | php/craur --output_format csv --csv_input_delimiter , feed.link[].@rel feed.link[].@href
+    $ cat php/tests/fixtures/books_comma_separated.csv | php/craur --input_format csv --csv_input_delimiter , --output_format json feed.link[].@rel feed.link[].@href
 
 ### Output-Format with `--output_format [json|xml|csv]`
 
