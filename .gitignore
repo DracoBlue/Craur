@@ -3,3 +3,4 @@ php/composer.lock
 bin
 /vendor
 /composer.lock
+/junit.xml

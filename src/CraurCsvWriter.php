@@ -8,11 +8,13 @@ class CraurCsvWriter {
     protected $root = null;
     protected $field_mappings = array();
     protected $raw_mapping_keys = array();
+    protected $delimiter = array();
     
-    public function __construct(Craur $root, array $field_mappings)
+    public function __construct(Craur $root, array $field_mappings, $delimiter = ';')
     {
         $this->root = $root;
         $this->field_mappings = $field_mappings;
+        $this->delimiter = $delimiter;
     }
     
    /**
@@ -25,7 +27,7 @@ class CraurCsvWriter {
         
         foreach ($rows as $row)
         {
-            fputcsv($file_handle, $row, ';');
+            fputcsv($file_handle, $row, $this->delimiter);
         }
     }
 
