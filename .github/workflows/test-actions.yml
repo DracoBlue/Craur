@@ -24,6 +24,9 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: exozet/php-fpm:${{ matrix.tag }}
+      env:
+        PHP_XDEBUG_MODE: coverage
+        XDEBUG_MODE: coverage
     steps:
       - name: Checkout
         uses: actions/checkout@v3
