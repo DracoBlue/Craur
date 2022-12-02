@@ -410,6 +410,8 @@ element, you can do this:
 
 ## Changelog
 
+- 3.0.1 (2022/12/02)
+  -  dropped Travis CI for GitHub Actions
 - 3.0.0 (2020/10/22)
   - moved `dracoblue/naith` as a dev dependency
   - dropped `phpoffice/phpexcel` for `phpoffice/phpspreadsheet` instead
