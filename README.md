@@ -422,7 +422,8 @@ Furthermore, you can also specify the csv delimiter by passing `--csv_output_del
     self,http://example.org/feed.atom
 
 ## Changelog
-
+- 3.1.0 (2022/12/06)
+  - added the possibility to overwrite the csv delimiter
 - 3.0.1 (2022/12/02)
   -  dropped Travis CI for GitHub Actions
   -  added php 8.1+8.2 to test matrix
