@@ -9,7 +9,9 @@ class CraurCli
 {
     protected $options = array(
         'input_format' => 'auto',
-        'output_format' => 'csv'
+        'output_format' => 'csv',
+        'csv_input_delimiter' => ';',
+        'csv_output_delimiter' => ';'
     );
     
     protected $field_mappings = array();
@@ -25,14 +27,16 @@ class CraurCli
   
         list($this->options['input_format']) = $options['input_format'];
         list($this->options['output_format']) = $options['output_format'];
-        
+        list($this->options['csv_input_delimiter']) = $options['csv_input_delimiter'];
+        list($this->options['csv_output_delimiter']) = $options['csv_output_delimiter'];
+
         $this->root = $this->getCraurFromInputString($input_string);
     }
     
     protected function getCraurFromInputString($input_string)
     {
         $input_format = $this->options['input_format'];
-        if ($input_format == 'auto')
+        if ($input_format === 'auto')
         {
             $trimmed_input_string = trim($input_string);
             $first_char = substr($trimmed_input_string, 0, 1);
@@ -78,7 +82,11 @@ class CraurCli
             
             try
             {
-                $craur = CraurCsvReader::createFromCsvFileHandle($file_handle, $this->field_mappings);
+                $craur = CraurCsvReader::createFromCsvFileHandle(
+                        $file_handle,
+                        $this->field_mappings,
+                        $this->options['csv_input_delimiter']
+                );
                 fclose($file_handle);
                 return $craur;
             }
@@ -108,7 +116,7 @@ class CraurCli
         }
         elseif ($output_format === 'csv')
         {
-            $writer = new CraurCsvWriter($this->root, $this->field_mappings);
+            $writer = new CraurCsvWriter($this->root, $this->field_mappings, $this->options['csv_output_delimiter']);
             $writer->writeToCsvFileHandle(STDOUT);
         }
     }

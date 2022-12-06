@@ -93,7 +93,7 @@ Will create and return a new craur instance for the given HTML string.
     assert($node->get('html.head.title') == 'Hans');
     assert($node->get('html.body') == 'Paul');
 
-### Craur::createFromCsvFile(`$file_path, array $field_mappings`) : `Craur`
+### Craur::createFromCsvFile(`$file_path, array $field_mappings, $delimiter = ';'`) : `Craur`
 
 Will load the csv file and fill the objects according to the given `$field_mappings`.
 
@@ -289,7 +289,7 @@ Return the object as a json string. Can be loaded from `Craur::createFromJson`.
 
 Return the object as a xml string. Can be loaded from `Craur::createFromXml`.
 
-### Craur#saveToCsvFile(`$file_path, array $field_mappings`) : `void`
+### Craur#saveToCsvFile(`$file_path, array $field_mappings, $delimiter=';'`) : `void`
 
 Will store the csv file with the objects content according to the given
 `$field_mappings`. The file can be loaded with `Craur::loadFromCsvFile` and
@@ -331,7 +331,7 @@ The csv file will look like this now:
     
 ### 
 
-### Craur#writeToCsvFileHandle(`$file_handle, array $field_mappings`) : `void`
+### Craur#writeToCsvFileHandle(`$file_handle, array $field_mappings, $delimiter = ';'`) : `void`
 
 Will write into the given file handle the objects content according to the given
 `$field_mappings`. Use `STDOUT` constant as `$file_handle` if you want to echo the
@@ -389,6 +389,12 @@ Example (xml to csv, with field mapping - see `--output_format` for more details
 
 Specify the input format. Default is auto.
 
+For the input format `csv` you can the change the delimiter by passing the option `--csv_input_delimiter`
+
+Example with `--csv_input_delimiter`
+
+    $ cat php/tests/fixtures/books_comma_separated.csv | php/craur --input_format csv --csv_input_delimiter , --output_format json feed.link[].@rel feed.link[].@href
+
 ### Output-Format with `--output_format [json|xml|csv]`
 
 Specify the output format.
@@ -408,8 +414,16 @@ element, you can do this:
     alternate;http://example.org/
     self;http://example.org/feed.atom
 
-## Changelog
+Furthermore, you can also specify the csv delimiter by passing `--csv_output_delimiter` as option 
 
+    $ cat php/tests/fixtures/example_atom_feed.xml | php/craur --output_format csv --csv_output_delimiter , feed.link[].@rel feed.link[].@href
+    // output:
+    alternate,http://example.org/
+    self,http://example.org/feed.atom
+
+## Changelog
+- 3.1.0 (2022/12/06)
+  - added the possibility to overwrite the csv delimiter
 - 3.0.1 (2022/12/02)
   -  dropped Travis CI for GitHub Actions
   -  added php 8.1+8.2 to test matrix
